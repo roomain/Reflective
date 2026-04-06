@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Reflective/Reflective.vcxproj" Id="c632d8d7-44b4-4edf-b3a8-76dfb6cd0b80" />
+  <Project Path="Reflective_test/Reflective_test.vcxproj" />
+</Solution>

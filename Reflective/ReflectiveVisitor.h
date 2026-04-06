@@ -1,0 +1,173 @@
+#pragma once
+/***********************************************
+* @headerfile ReflectiveVisitor.h
+* @date 06 / 04 / 2026
+* @author Roomain
+************************************************/
+#include <type_traits>
+#include <boost/json.hpp>
+#include <boost/json/visit.hpp>
+#include <boost/json/array.hpp>
+#include "ReflectiveException.h"
+#include "Reflective_traits.h"
+
+template<typename Type>
+struct ReflectiveVisitor
+{
+	//static inline std::unordered_map<std::string, ConvertStringToInt> s_EnumConvertDB;	/*!< database of convertion string to enum int value*/
+	Type& m_data;	/*!< reference to data to fill*/
+
+	void operator()(const boost::json::object& a_value) const
+	{
+		//Reflective::instance().deserialize(a_value, m_data);
+	}
+
+	void operator()(const boost::json::array& a_value) const
+	{
+		if constexpr (is_std_vector_v<Type>)
+		{
+			for (const auto& item : a_value)
+				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace_back()), item);
+
+		}
+		else if constexpr (is_std_list_v<Type>)
+		{
+			for (const auto& item : a_value)
+				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace()), item);
+		}
+		else if constexpr (is_std_array_v<Type>)
+		{
+			if (a_value.size() != m_data.size())
+			{
+				int index = 0;
+				for(auto& arrayData : m_data)
+				{
+					boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(arrayData), a_value.at(index));
+					++index;
+				}
+			}
+			else
+			{
+				throw ReflectiveException::incompatibleSize(std::source_location::current(), a_value.size(), m_data.size());
+			}
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, boost::json::array>(std::source_location::current());
+		}
+	}
+
+	void operator()(const boost::json::string& a_value) const
+	{
+		if constexpr (std::is_enum_v<Type>)
+		{
+			// todo
+			// convert string to int value via s_EnumConvertDB
+			// assign int value to m_data
+		}
+		else if constexpr (std::is_assignable_v<Type, boost::json::string>)
+		{
+			m_data = a_value;
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, boost::json::string>(std::source_location::current());
+		}
+	}
+
+	void operator()(const std::int64_t& a_value) const
+	{
+		if constexpr (std::is_same_v<Type, int>)
+		{
+			m_data = static_cast<int>(a_value);
+		}
+		else if constexpr (std::is_same_v<Type, unsigned int>)
+		{
+			if (a_value >= 0)
+			{
+				m_data = static_cast<unsigned int>(a_value);
+			}
+			else
+			{
+				throw ReflectiveException::wrongType<Type, std::int64_t>(std::source_location::current());
+			}
+		}
+		else if constexpr (std::is_same_v<Type, float>)
+		{
+			m_data = static_cast<float>(a_value);
+		}
+		else if constexpr (std::is_same_v<Type, double>)
+		{
+			m_data = static_cast<double>(a_value);
+		}
+		else if constexpr (std::is_assignable_v<Type, std::int64_t>)
+		{
+			m_data = a_value;
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, std::int64_t>(std::source_location::current());
+		}
+	}
+
+	void operator()(const std::uint64_t& a_value) const
+	{
+		if constexpr (std::is_same_v<Type, int>)
+		{
+			m_data = static_cast<int>(a_value);
+		}
+		else if constexpr (std::is_same_v<Type, unsigned int>)
+		{
+			m_data = static_cast<unsigned int>(a_value);
+		}
+		else if constexpr (std::is_same_v<Type, float>)
+		{
+			m_data = static_cast<float>(a_value);
+		}
+		else if constexpr (std::is_same_v<Type, double>)
+		{
+			m_data = static_cast<double>(a_value);
+		}
+		else if constexpr (std::is_assignable_v<Type, std::uint64_t>)
+		{
+			m_data = a_value;
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, std::uint64_t>(std::source_location::current());
+		}
+	}
+
+	void operator()(const double& a_value) const
+	{
+		if constexpr (std::is_same_v<Type, float>)
+		{
+			m_data = static_cast<float>(a_value);
+		}
+		else if constexpr (std::is_assignable_v<Type, double>)
+		{
+			m_data = a_value;
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, double>(std::source_location::current());
+		}
+	}
+
+	void operator()(const bool a_value) const
+	{
+		if constexpr (std::is_same_v<Type, bool>)
+		{
+			m_data = a_value;
+		}
+		else
+		{
+			throw ReflectiveException::wrongType<Type, bool>(std::source_location::current());
+		}
+	}
+
+	void operator()(std::nullptr_t) const
+	{
+		// todo
+	}
+};
