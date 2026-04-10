@@ -52,3 +52,10 @@ struct is_reflective<T, std::void_t<decltype(&T::s_reflectiveCtx)> > : std::true
 
 template<typename T>
 constexpr bool is_reflective_v = is_reflective<T>::value;
+
+//-------------------------------------------------------------------------------
+
+template<typename T>
+concept is_convertible = requires(const std::string_view s) {
+    { convert<T>(s) } -> std::same_as<T>;
+};

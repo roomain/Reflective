@@ -6,6 +6,7 @@
 ************************************************/
 #include <type_traits>
 #include <functional>
+#include <string_view>
 #include <boost/json.hpp>
 #include <boost/json/visit.hpp>
 #include <boost/json/array.hpp>
@@ -70,11 +71,10 @@ struct ReflectiveVisitor
 
 	void operator()(const boost::json::string& a_value) const
 	{
-		if constexpr (std::is_enum_v<Type>)
+		if constexpr (is_convertible<Type>)
 		{
-			// todo
-			// convert string to int value via s_EnumConvertDB
-			// assign int value to m_data
+			std::string_view strView(a_value.data(), a_value.size());
+			m_data = convert<Type>(strView);
 		}
 		else if constexpr (std::is_assignable_v<Type, boost::json::string>)
 		{
@@ -135,6 +135,7 @@ struct ReflectiveVisitor
 		{
 			throw ReflectiveException::wrongType<Type, std::uint64_t>(std::source_location::current());
 		}
+	}
 
 
 	void operator()(const double& a_value) const
