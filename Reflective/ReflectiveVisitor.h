@@ -26,7 +26,7 @@ struct ReflectiveVisitor
 	{
 		if constexpr (is_reflective_v<Type>)
 		{
-			m_reflectData.deserialize(a_value, m_data, Type::s_reflectiveCtx);
+			m_reflectData.get().deserialize(a_value, m_data, Type::s_reflectiveCtx);
 		}
 		else
 		{
@@ -76,7 +76,12 @@ struct ReflectiveVisitor
 			std::string_view strView(a_value.data(), a_value.size());
 			m_data = convert<Type>(strView);
 		}
-		else if constexpr (std::is_assignable_v<Type, boost::json::string>)
+		else if constexpr (std::is_same_v<Type, std::string>)
+		{
+			// because std::is_trivially_assignable_v<std::string&, boost::json::string> is false
+			m_data = a_value;
+		}
+		else if constexpr (std::is_trivially_assignable_v<Type&, boost::json::string>)
 		{
 			m_data = a_value;
 		}
@@ -111,9 +116,9 @@ struct ReflectiveVisitor
 		{
 			m_data = static_cast<double>(a_value);
 		}
-		else if constexpr (std::is_assignable_v<Type&, std::int64_t>)
+		else if constexpr (std::is_trivially_assignable_v<Type&, std::int64_t>)
 		{
-			m_data = a_value;
+			m_data = static_cast<Type>(a_value);
 		}
 		else
 		{

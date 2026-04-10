@@ -52,3 +52,12 @@ struct TestEnum
 	REFLECT_DEFINE(TestEnum)
 };
 REFLECT_IMPL(TestEnum)
+
+REFLECT_CLASS
+struct TestNested
+{
+	TestEnum m_enumStruct;
+	int m_value;
+	REFLECT_DEFINE(TestNested)
+};
+REFLECT_IMPL(TestNested)

@@ -39,26 +39,29 @@ namespace Reflectivetest
 	TEST_CLASS(Reflectivetest)
 	{
 	public:
-		
-		/*TEST_METHOD(Test_deserialization)
+		TEST_METHOD_CLEANUP(cleanup)
 		{
-			struct TestStruct
-			{
-				bool m_bool;
-				int m_int;
-				std::string m_string;
-				std::vector<float> m_floatVector;
-			};
+			/*reset for test*/
+			TestStructIntern::s_deserialized = false;
+			TestStructIntern::s_reference.m_bool = false;
+			TestStructIntern::s_reference.m_string = "";
+			TestStructIntern::s_reference.m_int = 0;
+			TestStructIntern::s_reference.m_floatVector.clear();
 
-			Assert::IsTrue(Reflective::instance().loadFile(R"(D:\ProjetsGIT\Reflective\Test_data\test1.json)"));
+			TestEnum::s_deserialized = false;
+			TestEnum::s_reference.m_enum = EnumTest::Enum0;
+			TestEnum::s_reference.m_value = 0;
+
+			TestNested::s_deserialized = false;
+		}
+		
+		TEST_METHOD(Test_deserialization)
+		{
+
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test1"));
 			Reflective::instance().setProfile("Test1");
-			TestStruct myTest;
-			Reflective::instance().deserialize("TestStruct", myTest,
-				std::make_pair("m_bool", &TestStruct::m_bool),
-				std::make_pair("m_int", &TestStruct::m_int),
-				std::make_pair("m_string", &TestStruct::m_string),
-				std::make_pair("m_floatVector", &TestStruct::m_floatVector));
+			TestStructIntern myTest;
 
 			Assert::IsTrue(myTest.m_bool);
 			Assert::AreEqual(5, myTest.m_int);
@@ -68,33 +71,19 @@ namespace Reflectivetest
 
 		TEST_METHOD(Test_deserialization_heritage)
 		{
-			struct TestStruct
-			{
-				bool m_bool;
-				int m_int;
-				std::string m_string;
-				std::vector<float> m_floatVector;
-			};
-
-			Assert::IsTrue(Reflective::instance().loadFile(R"(D:\ProjetsGIT\Reflective\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test1"));
 			Reflective::instance().setProfile("Test2");
-			TestStruct myTest;
-			Reflective::instance().deserialize("TestStruct", myTest,
-				std::make_pair("m_bool", &TestStruct::m_bool),
-				std::make_pair("m_int", &TestStruct::m_int),
-				std::make_pair("m_string", &TestStruct::m_string),
-				std::make_pair("m_floatVector", &TestStruct::m_floatVector));
+			TestStructIntern myTest;
 
 			Assert::IsFalse(myTest.m_bool);
 			Assert::AreEqual(8, myTest.m_int);
 			Assert::AreEqual(std::string("Hello world"), myTest.m_string);
 			Assert::AreEqual(size_t(6), myTest.m_floatVector.size());
-		}*/
+		}
 
 		TEST_METHOD(Test_deserialization_intern)
 		{
-			std::string current = std::filesystem::current_path().string();
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("TestIntern"));
 			Reflective::instance().setProfile("TestIntern");
@@ -104,6 +93,42 @@ namespace Reflectivetest
 			Assert::AreEqual(5, myTest.m_int);
 			Assert::AreEqual(std::string("Hello world"), myTest.m_string);
 			Assert::AreEqual(size_t(4), myTest.m_floatVector.size());
+		}
+
+		TEST_METHOD(Test_enumerate)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("EnumProfile"));
+			Reflective::instance().setProfile("EnumProfile");
+			TestEnum myTest;
+
+			Assert::AreEqual(4, myTest.m_value);
+			Assert::IsTrue(EnumTest::Enum2 == myTest.m_enum);
+		}
+
+		TEST_METHOD(Test_nested)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("NestedProfile"));
+			Reflective::instance().setProfile("NestedProfile");
+			//TestEnum tEnum;
+			TestNested nested;
+			Assert::IsTrue(TestEnum::s_deserialized);
+			Assert::AreEqual(3, nested.m_value);
+			Assert::IsTrue(EnumTest::Enum2 == nested.m_enumStruct.m_enum);
+			Assert::AreEqual(4, nested.m_enumStruct.m_value);
+		}
+
+		TEST_METHOD(Test_nested1)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("NestedProfile2"));
+			Reflective::instance().setProfile("NestedProfile2");
+			TestNested nested;
+			
+			Assert::AreEqual(3, nested.m_value);
+			Assert::IsTrue(EnumTest::Enum1 == nested.m_enumStruct.m_enum);
+			Assert::AreEqual(2, nested.m_enumStruct.m_value);
 		}
 	};
 }
