@@ -42,3 +42,13 @@ struct is_std_array<std::array<Type, Size>> : std::true_type {};
 
 template<typename T>
 constexpr bool is_std_array_v = is_std_array<T>::value;
+//-------------------------------------------------------------------------------
+
+template<typename, typename = std::void_t<>>
+struct is_reflective : std::false_type {};
+
+template<typename T>
+struct is_reflective<T, std::void_t<decltype(&T::s_reflectiveCtx)> > : std::true_type {};
+
+template<typename T>
+constexpr bool is_reflective_v = is_reflective<T>::value;

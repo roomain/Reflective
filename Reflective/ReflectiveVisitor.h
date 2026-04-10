@@ -5,21 +5,32 @@
 * @author Roomain
 ************************************************/
 #include <type_traits>
+#include <functional>
 #include <boost/json.hpp>
 #include <boost/json/visit.hpp>
 #include <boost/json/array.hpp>
 #include "ReflectiveException.h"
 #include "Reflective_traits.h"
 
+class ReflectiveJsonFileData;
+
 template<typename Type>
 struct ReflectiveVisitor
 {
 	//static inline std::unordered_map<std::string, ConvertStringToInt> s_EnumConvertDB;	/*!< database of convertion string to enum int value*/
-	Type& m_data;	/*!< reference to data to fill*/
+	Type& m_data;													/*!< reference to data to fill*/
+	std::reference_wrapper<const ReflectiveJsonFileData> m_reflectData;
 
 	void operator()(const boost::json::object& a_value) const
 	{
-		//Reflective::instance().deserialize(a_value, m_data);
+		if constexpr (is_reflective_v<Type>)
+		{
+			m_reflectData.deserialize(a_value, m_data, Type::s_reflectiveCtx);
+		}
+		else
+		{
+			throw ReflectiveException::typeNotReflective<Type>(std::source_location::current());
+		}
 	}
 
 	void operator()(const boost::json::array& a_value) const
@@ -27,13 +38,13 @@ struct ReflectiveVisitor
 		if constexpr (is_std_vector_v<Type>)
 		{
 			for (const auto& item : a_value)
-				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace_back()), item);
+				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace_back(), m_reflectData), item);
 
 		}
 		else if constexpr (is_std_list_v<Type>)
 		{
 			for (const auto& item : a_value)
-				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace()), item);
+				boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(m_data.emplace(), m_reflectData), item);
 		}
 		else if constexpr (is_std_array_v<Type>)
 		{
@@ -42,7 +53,7 @@ struct ReflectiveVisitor
 				int index = 0;
 				for(auto& arrayData : m_data)
 				{
-					boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(arrayData), a_value.at(index));
+					boost::json::visit(ReflectiveVisitor<std::remove_cvref_t<typename Type::value_type>>(arrayData, m_reflectData), a_value.at(index));
 					++index;
 				}
 			}
@@ -100,7 +111,7 @@ struct ReflectiveVisitor
 		{
 			m_data = static_cast<double>(a_value);
 		}
-		else if constexpr (std::is_assignable_v<Type, std::int64_t>)
+		else if constexpr (std::is_assignable_v<Type&, std::int64_t>)
 		{
 			m_data = a_value;
 		}
@@ -112,39 +123,27 @@ struct ReflectiveVisitor
 
 	void operator()(const std::uint64_t& a_value) const
 	{
-		if constexpr (std::is_same_v<Type, int>)
-		{
-			m_data = static_cast<int>(a_value);
-		}
-		else if constexpr (std::is_same_v<Type, unsigned int>)
-		{
-			m_data = static_cast<unsigned int>(a_value);
-		}
-		else if constexpr (std::is_same_v<Type, float>)
-		{
-			m_data = static_cast<float>(a_value);
-		}
-		else if constexpr (std::is_same_v<Type, double>)
-		{
-			m_data = static_cast<double>(a_value);
-		}
-		else if constexpr (std::is_assignable_v<Type, std::uint64_t>)
+		if constexpr (std::is_same_v<Type, std::uint64_t>)
 		{
 			m_data = a_value;
+		}
+		else if constexpr (std::is_trivially_assignable_v<Type&, std::uint64_t>)
+		{
+			m_data = static_cast<Type>(a_value);
 		}
 		else
 		{
 			throw ReflectiveException::wrongType<Type, std::uint64_t>(std::source_location::current());
 		}
-	}
+
 
 	void operator()(const double& a_value) const
 	{
-		if constexpr (std::is_same_v<Type, float>)
+		if constexpr (std::is_same_v<Type, double>)
 		{
-			m_data = static_cast<float>(a_value);
+			m_data = a_value;
 		}
-		else if constexpr (std::is_assignable_v<Type, double>)
+		else if constexpr (std::is_trivially_assignable_v<Type&, double>)
 		{
 			m_data = a_value;
 		}

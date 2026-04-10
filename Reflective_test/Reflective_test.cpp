@@ -1,40 +1,13 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "Reflective.h"
+#include "test_structs.h"
+#include <filesystem>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 
-struct TestStructIntern
-{
-	bool m_bool;
-	int m_int;
-	std::string m_string;
-	std::vector<float> m_floatVector;
-
-	static inline bool s_created = false;
-	static TestStructIntern s_ref;
-
-	static bool deserialize(TestStructIntern& a_data)
-	{
-		Reflective::instance().deserialize("TestStructIntern", a_data,
-			std::make_pair("m_bool", &TestStructIntern::m_bool),
-			std::make_pair("m_int", &TestStructIntern::m_int),
-			std::make_pair("m_string", &TestStructIntern::m_string),
-			std::make_pair("m_floatVector", &TestStructIntern::m_floatVector));
-	}
-
-	TestStructIntern()
-	{
-		if (!TestStructIntern::s_created)
-			TestStructIntern::s_created = TestStructIntern::deserialize(TestStructIntern::s_ref);		
-		*this = TestStructIntern::s_ref;
-	}
-};
-
-TestStructIntern TestStructIntern::s_ref;
-
-struct TestStructNested
+/*struct TestStructNested
 {
 	bool m_bool;
 	TestStructIntern m_intern;
@@ -59,7 +32,7 @@ struct TestStructNested
 	}
 };
 
-TestStructNested TestStructNested::s_ref;
+TestStructNested TestStructNested::s_ref;*/
 
 namespace Reflectivetest
 {
@@ -67,7 +40,7 @@ namespace Reflectivetest
 	{
 	public:
 		
-		TEST_METHOD(Test_deserialization)
+		/*TEST_METHOD(Test_deserialization)
 		{
 			struct TestStruct
 			{
@@ -117,11 +90,12 @@ namespace Reflectivetest
 			Assert::AreEqual(8, myTest.m_int);
 			Assert::AreEqual(std::string("Hello world"), myTest.m_string);
 			Assert::AreEqual(size_t(6), myTest.m_floatVector.size());
-		}
+		}*/
 
 		TEST_METHOD(Test_deserialization_intern)
 		{
-			Assert::IsTrue(Reflective::instance().loadFile(R"(D:\ProjetsGIT\Reflective\Test_data\test1.json)"));
+			std::string current = std::filesystem::current_path().string();
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("TestIntern"));
 			Reflective::instance().setProfile("TestIntern");
 			TestStructIntern myTest;

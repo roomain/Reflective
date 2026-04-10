@@ -49,4 +49,10 @@ public:
 	{
 		return ReflectiveException(a_location, std::format("Incompatible array size {} for {}", a_size, a_expectedSize));
 	}
+
+	template<typename Type>
+	static ReflectiveException typeNotReflective(const std::source_location& a_location)
+	{
+		return ReflectiveException(a_location, std::format("Type {} is not a reflective type", type_name<Type>()));
+	}
 };

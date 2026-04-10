@@ -26,7 +26,7 @@ class ReflectiveClass:
 class ReflectiveParser:
     def __init__(self, filepath : str):
         self.filepath = filepath
-        self.classes = dict[str, ReflectiveClass]
+        self.classes : dict[str, ReflectiveClass] = {}
 
     def parse(self, code: str):
         for match in re.finditer(reflective_pattern, code, re.DOTALL):
@@ -42,7 +42,7 @@ class ReflectiveParser:
             self.classes[class_name] = reflective_class
 
     def printStats(self):
-        print("Reflective count {}".format(len(self.classes)))
+        print("Reflective count {}".format(len(self.classes.items())))
         for class_name, reflective_class in self.classes.items():
             print("- {} ({} members)".format(class_name, len(reflective_class.members)))
 
@@ -57,34 +57,54 @@ class ReflectiveParser:
             file.write("/***********************************************\n")
             file.write("* @headerfile {}\n".format(filename))
             file.write("* @date {}/{}/{}\n".format(dateNow.day, dateNow.month, dateNow.year))
-            file.write("* @author reflecGen.py\n")
+            file.write("* @author reflective.py\n")
             file.write("************************************************/\n")
             file.write("#include <utility>\n")
+            file.write("#include <tuple>\n")
+            file.write("#include <string_view>\n")
             for class_name, reflective_class in self.classes.items():
                 file.write("\n\n")
-                file.write("#define REFLECT_DEF_{}\n".format(class_name))
-                file.write("static inline bool s_deserialized = false;\\\n")
-                file.write("static inline {} s_reference;\\\n\n".format(class_name))
-                file.write("{}()\\\n".format(class_name))
-                file.write("{\\\n")
-                file.write("\tif(!s_deserialized)\\n")
-                file.write("\t{\\\n")
-
-                file.write("\t\tReflective::instance().deserialize({},\\\n".format(class_name))
-                for index in range(reflective_class.members.num):
+                file.write("#define REFLECT_DEF_{} \\\n".format(class_name))
+                file.write("static inline bool s_deserialized = false; \\\n")
+                file.write("static {} s_reference; \\\n".format(class_name))
+                tupleContent = ""
+                memberCount = len(reflective_class.members)
+                for index in range(memberCount):
                     member = reflective_class.members[index]
-                    if index < (reflective_class.members.num - 1):                        
-                        file.write("\t\t\t\"std::make_pair<{}\", {}::{}>,\\\n".format(member[0], class_name, member[1]))
+                    
+                    if index == 0:    
+                        tupleContent += "std::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
+                    elif index < (memberCount - 1):                        
+                        tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
                     else:
-                        file.write("\t\t\t\"std::make_pair<{}\", {}::{}>);\\\n".format(member[0], class_name, member[1]))                    
+                        tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*> \\\n".format(member[0], class_name)
+
+                file.write("static std::tuple<{}> s_reflectiveCtx; \\\n \\\n".format(tupleContent))
+
+
+                #################################################################################################################
+                file.write("inline {}() \\\n".format(class_name))
+                file.write("{ \\\n")
+                file.write("\tif(!{}::s_deserialized) \\\n".format(class_name))
+                file.write("\t{ \\\n")
+                file.write("\t\t{}::s_deserialized = Reflective::instance().deserialize(\"{}\",{}::s_reference); \\\n".format(class_name, class_name, class_name))
+                file.write("\t} \\\n")
+                file.write("\t*this = s_reference; \\\n")       
+                file.write("}\n")
+                #################################################################################################################
+                file.write("\n\n")
+                file.write("#define REFLECT_STATIC_IMPL_{} \\\n".format(class_name))
+                file.write("{} {}::s_reference; \\\n".format(class_name, class_name))
                 
-                file.write("\t\ts_deserialized = true;\\\n")
-                file.write("\t}\\\n")
-                file.write("\telse\\\n")
-                file.write("\t{\\\n")
-                file.write("\t\t*this = s_reference;\\\n")
-                file.write("\t}\\\n")                
-                file.write("}\\\n")
+                tupleMakeContent = ""
+                for index in range(memberCount):
+                    member = reflective_class.members[index]
+                    if index < (memberCount - 1):                        
+                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{}),".format(member[1], class_name, member[1])
+                    else:
+                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{})".format(member[1], class_name, member[1])
+
+                file.write("std::tuple<{}> {}::s_reflectiveCtx = std::make_tuple({});\n".format(tupleContent, class_name, tupleMakeContent))
 
 
 
@@ -97,8 +117,12 @@ print(" / _, _/ /___/ __/ / /___/ /___/ /___  / /    / /_/ / /___/ /|  / /___/ _
 print("/_/ |_/_____/_/   /_____/_____/\\____/ /_/     \\____/_____/_/ |_/_____/_/ |_/_/  |_/_/  \\____/_/ |_|  ")
 print("Parse header files to generate deserialize functions")
 print("Search path: {}".format(sys.argv))
+parseArgIndex = 1
+if sys.argv[1] == "reflective.py":
+    parseArgIndex = 2
+
 if len(sys.argv) > 1:
-    print("Parse headers from {}".format(sys.argv[1]))
+    print("Parse headers from {}".format(sys.argv[parseArgIndex]))
     headers = []
     #process input headers
     for filePath in Path(sys.argv[1]).rglob('*.h'):

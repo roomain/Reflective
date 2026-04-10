@@ -144,9 +144,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflective.h" />
-    <ClInclude Include="ReflectiveCtx.h" />
+    <ClInclude Include="ReflectiveData.h" />
     <ClInclude Include="ReflectiveException.h" />
     <ClInclude Include="ReflectiveVisitor.h" />
+    <ClInclude Include="Reflective_macros.h" />
     <ClInclude Include="Reflective_traits.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Reflective.cpp" />
+    <ClCompile Include="ReflectiveData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
