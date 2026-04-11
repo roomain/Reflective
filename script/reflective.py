@@ -65,19 +65,17 @@ class ReflectiveParser:
             for class_name, reflective_class in self.classes.items():
                 file.write("\n\n")
                 file.write("#define REFLECT_DEF_{} \\\n".format(class_name))
-                file.write("static inline bool s_deserialized = false; \\\n")
-                file.write("static {} s_reference; \\\n".format(class_name))
+                #file.write("static inline bool s_deserialized = false; \\\n")
+                #file.write("static {} s_reference; \\\n".format(class_name))
                 tupleContent = ""
                 memberCount = len(reflective_class.members)
                 for index in range(memberCount):
                     member = reflective_class.members[index]
-                    
-                    if index == 0:    
-                        tupleContent += "std::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
-                    elif index < (memberCount - 1):                        
-                        tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
+
+                    if index == (memberCount - 1): #last member
+                        tupleContent += "std::pair<std::string_view, {} {}::*> \\\n".format(member[0], class_name)
                     else:
-                        tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*> \\\n".format(member[0], class_name)
+                        tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
 
                 file.write("static std::tuple<{}> s_reflectiveCtx; \\\n \\\n".format(tupleContent))
 
@@ -85,24 +83,25 @@ class ReflectiveParser:
                 #################################################################################################################
                 file.write("inline {}() \\\n".format(class_name))
                 file.write("{ \\\n")
-                file.write("\tif(!{}::s_deserialized) \\\n".format(class_name))
-                file.write("\t{ \\\n")
-                file.write("\t\t{}::s_deserialized = Reflective::instance().deserialize(\"{}\",{}::s_reference); \\\n".format(class_name, class_name, class_name))
-                file.write("\t} \\\n")
-                file.write("\t*this = s_reference; \\\n")       
+                #file.write("\tif(!{}::s_deserialized) \\\n".format(class_name))
+                #file.write("\t{ \\\n")
+                #file.write("\t\t{}::s_deserialized = Reflective::instance().deserialize(\"{}\",{}::s_reference); \\\n".format(class_name, class_name, class_name))
+                #file.write("\t} \\\n")
+                #file.write("\t*this = s_reference; \\\n")       
+                file.write("\tReflective::instance().deserialize(\"{}\",*this); \\\n".format(class_name))
                 file.write("}\n")
                 #################################################################################################################
                 file.write("\n\n")
                 file.write("#define REFLECT_STATIC_IMPL_{} \\\n".format(class_name))
-                file.write("{} {}::s_reference; \\\n".format(class_name, class_name))
+                #file.write("{} {}::s_reference; \\\n".format(class_name, class_name))
                 
                 tupleMakeContent = ""
                 for index in range(memberCount):
                     member = reflective_class.members[index]
-                    if index < (memberCount - 1):                        
-                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{}),".format(member[1], class_name, member[1])
-                    else:
+                    if index == (memberCount - 1):
                         tupleMakeContent += "std::make_pair(\"{}\", &{}::{})".format(member[1], class_name, member[1])
+                    else:
+                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{}),".format(member[1], class_name, member[1])
 
                 file.write("std::tuple<{}> {}::s_reflectiveCtx = std::make_tuple({});\n".format(tupleContent, class_name, tupleMakeContent))
 

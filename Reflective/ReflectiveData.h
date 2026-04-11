@@ -11,7 +11,6 @@
 #include <stack>
 #include <tuple>
 #include <boost/json.hpp>
-#include "Reflective_traits.h"
 #include "ReflectiveVisitor.h"
 
 struct JsonReflectiveProfileData
@@ -49,9 +48,6 @@ public:
 	template<typename Type>
 	void deserialize(const boost::json::object& a_json, const std::string_view a_memberName, Type& a_data)const
 	{
-		if constexpr(is_reflective_v<Type>)
-			a_data = Type::s_reference;
-
 		if (auto iter = a_json.find(a_memberName); iter != a_json.cend())
 		{
 			boost::json::visit(ReflectiveVisitor<Type>(a_data, *this), iter->value());

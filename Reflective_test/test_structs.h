@@ -61,3 +61,11 @@ struct TestNested
 	REFLECT_DEFINE(TestNested)
 };
 REFLECT_IMPL(TestNested)
+
+REFLECT_CLASS
+struct TestLegacy : TestEnum
+{
+	int m_valueLegacy;
+	REFLECT_DEFINE(TestLegacy)
+};
+REFLECT_IMPL(TestLegacy)

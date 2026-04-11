@@ -7,41 +7,13 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 
-/*struct TestStructNested
-{
-	bool m_bool;
-	TestStructIntern m_intern;
-
-	static inline bool s_created = false;
-	static TestStructNested s_ref;
-
-
-	static bool deserialize(TestStructNested& a_data)
-	{
-		Reflective::instance().deserialize("TestStructNested", a_data,
-			std::make_pair("m_bool", &TestStructNested::m_bool),
-			std::make_pair("m_intern", &TestStructNested::m_intern));
-	}
-
-	TestStructNested()
-	{
-		if (!TestStructNested::s_created)
-			TestStructNested::s_created = TestStructNested::deserialize(TestStructNested::s_ref);
-
-		*this = TestStructNested::s_ref;
-	}
-};
-
-TestStructNested TestStructNested::s_ref;*/
-
 namespace Reflectivetest
 {
 	TEST_CLASS(Reflectivetest)
 	{
 	public:
-		TEST_METHOD_CLEANUP(cleanup)
+		/*TEST_METHOD_CLEANUP(cleanup)
 		{
-			/*reset for test*/
 			TestStructIntern::s_deserialized = false;
 			TestStructIntern::s_reference.m_bool = false;
 			TestStructIntern::s_reference.m_string = "";
@@ -53,7 +25,7 @@ namespace Reflectivetest
 			TestEnum::s_reference.m_value = 0;
 
 			TestNested::s_deserialized = false;
-		}
+		}*/
 		
 		TEST_METHOD(Test_deserialization)
 		{
@@ -113,7 +85,7 @@ namespace Reflectivetest
 			Reflective::instance().setProfile("NestedProfile");
 			//TestEnum tEnum;
 			TestNested nested;
-			Assert::IsTrue(TestEnum::s_deserialized);
+			//Assert::IsTrue(TestEnum::s_deserialized);
 			Assert::AreEqual(3, nested.m_value);
 			Assert::IsTrue(EnumTest::Enum2 == nested.m_enumStruct.m_enum);
 			Assert::AreEqual(4, nested.m_enumStruct.m_value);
@@ -129,6 +101,18 @@ namespace Reflectivetest
 			Assert::AreEqual(3, nested.m_value);
 			Assert::IsTrue(EnumTest::Enum1 == nested.m_enumStruct.m_enum);
 			Assert::AreEqual(2, nested.m_enumStruct.m_value);
+		}
+
+		TEST_METHOD(Test_legacy)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("LegacyProfile"));
+			Reflective::instance().setProfile("LegacyProfile");
+			TestLegacy legacy;
+
+			Assert::AreEqual(3, legacy.m_valueLegacy);
+			Assert::IsTrue(EnumTest::Enum2 == legacy.m_enum);
+			Assert::AreEqual(4, legacy.m_value);
 		}
 	};
 }

@@ -77,6 +77,19 @@
           "m_value": 2
         }
       }
+    },
+    {
+      "Id": {
+        "name": "LegacyProfile",
+        "parent": null
+      },
+      "TestEnum": {
+        "m_enum": "Enum2",
+        "m_value": 4
+      },
+      "TestLegacy": {
+        "m_valueLegacy": 3
+      }
     }
   ]
 }
