@@ -107,7 +107,7 @@
     </Link>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)script
-python reflective.py $(ProjectDir) -q
+python reflective.py $(ProjectDir)
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -167,7 +167,7 @@ python reflective.py $(ProjectDir) -q
     </Link>
     <PreBuildEvent>
       <Command>cd $(SolutionDir)script
-python reflective.py $(ProjectDir) -q
+python reflective.py $(ProjectDir)
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>

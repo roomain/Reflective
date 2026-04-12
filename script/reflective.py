@@ -43,11 +43,13 @@ class ReflectiveParser:
             self.classes[class_name] = reflective_class
 
     def printStats(self):
-        print("Reflective count {}".format(len(self.classes.items())))
-        for class_name, reflective_class in self.classes.items():
-            print("- {} ({} members)".format(class_name, len(reflective_class.members)))
-            for type, name in reflective_class.members:
-                print('   {} {}'.format(type, name))
+        count = len(self.classes.items())
+        if count > 0:
+            print("Reflective count {}".format(count))
+            for class_name, reflective_class in self.classes.items():
+                print("- {} ({} members)".format(class_name, len(reflective_class.members)))
+                for type, name in reflective_class.members:
+                    print('   {} {}'.format(type, name))
 
     def generateHeader(self):
         if len(self.classes) > 0:
@@ -119,10 +121,8 @@ print(" / _, _/ /___/ __/ / /___/ /___/ /___  / /    / /_/ / /___/ /|  / /___/ _
 print("/_/ |_/_____/_/   /_____/_____/\\____/ /_/     \\____/_____/_/ |_/_____/_/ |_/_/  |_/_/  \\____/_/ |_|  ")
 print("Parse header files to generate deserialize functions")
 print("Search path: {}".format(sys.argv))
+quiet =  sys.argv.__contains__("-q")
 parseArgIndex = 1
-if sys.argv[1] == "reflective.py":
-    parseArgIndex = 2
-
 if len(sys.argv) > 1:
     print("Parse headers from {}".format(sys.argv[parseArgIndex]))
     headers = []
@@ -133,7 +133,8 @@ if len(sys.argv) > 1:
         file.close()
         parser = ReflectiveParser(filePath)
         parser.parse(code)
-        parser.printStats()
+        if not quiet:
+            parser.printStats()
         headers.append(parser)
 
     #generate output headers

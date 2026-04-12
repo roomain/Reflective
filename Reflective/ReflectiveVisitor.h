@@ -151,7 +151,7 @@ struct ReflectiveVisitor
 		}
 		else if constexpr (std::is_trivially_assignable_v<Type&, double>)
 		{
-			m_data = a_value;
+			m_data = static_cast<Type>(a_value);
 		}
 		else
 		{
