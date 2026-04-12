@@ -11,7 +11,8 @@ reflective_pattern = (
     r'(?:\s*:\s*(?:(?:public|private|protected)\s+)?(\w+))?' + commentary_pattern +
     r'\{([^}]*)\}'
 )
-member_pattern = commentary_pattern + r'\s*([^;]+?)\s+([a-zA-Z_]\w*)\s*;'
+member_pattern = commentary_pattern + r'\s*([^;]+?)\s+([a-zA-Z_]\w*)\s*(:?=\s*\w*)*;'
+
 
 class ReflectiveClass:
     def __init__(self, name, base_class=None):
@@ -36,8 +37,8 @@ class ReflectiveParser:
 
             reflective_class = ReflectiveClass(class_name, base_class)
             for member_match in re.finditer(member_pattern, body):
-                type_str = member_match.group(1)
-                member_name = member_match.group(2)
+                type_str = member_match.group(1) 
+                member_name =  member_match.group(2)
                 reflective_class.add_member(type_str, member_name)
             self.classes[class_name] = reflective_class
 
@@ -45,6 +46,8 @@ class ReflectiveParser:
         print("Reflective count {}".format(len(self.classes.items())))
         for class_name, reflective_class in self.classes.items():
             print("- {} ({} members)".format(class_name, len(reflective_class.members)))
+            for type, name in reflective_class.members:
+                print('   {} {}'.format(type, name))
 
     def generateHeader(self):
         if len(self.classes) > 0:
