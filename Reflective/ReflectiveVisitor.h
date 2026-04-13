@@ -18,7 +18,6 @@ class ReflectiveJsonFileData;
 template<typename Type>
 struct ReflectiveVisitor
 {
-	//static inline std::unordered_map<std::string, ConvertStringToInt> s_EnumConvertDB;	/*!< database of convertion string to enum int value*/
 	Type& m_data;													/*!< reference to data to fill*/
 	std::reference_wrapper<const ReflectiveJsonFileData> m_reflectData;
 
@@ -78,8 +77,13 @@ struct ReflectiveVisitor
 		}
 		else if constexpr (std::is_same_v<Type, std::string>)
 		{
-			// because std::is_trivially_assignable_v<std::string&, boost::json::string> is false
+			// because std::is_trivially_assignable_v<std::string&, std::string> is false
 			m_data = a_value;
+		}
+		else if constexpr (is_std_optional_same_v<Type, std::string>)
+		{
+			// because std::is_trivially_assignable_v<std::string&, std::string> is false
+			m_data = static_cast<Type::value_type>(a_value);
 		}
 		else if constexpr (std::is_trivially_assignable_v<Type&, boost::json::string>)
 		{
@@ -93,11 +97,7 @@ struct ReflectiveVisitor
 
 	void operator()(const std::int64_t& a_value) const
 	{
-		if constexpr (std::is_same_v<Type, int>)
-		{
-			m_data = static_cast<int>(a_value);
-		}
-		else if constexpr (std::is_same_v<Type, unsigned int>)
+		if constexpr (std::is_same_v<Type, unsigned int>)
 		{
 			if (a_value >= 0)
 			{
@@ -108,17 +108,13 @@ struct ReflectiveVisitor
 				throw ReflectiveException::wrongType<Type, std::int64_t>(std::source_location::current());
 			}
 		}
-		else if constexpr (std::is_same_v<Type, float>)
-		{
-			m_data = static_cast<float>(a_value);
-		}
-		else if constexpr (std::is_same_v<Type, double>)
-		{
-			m_data = static_cast<double>(a_value);
-		}
 		else if constexpr (std::is_trivially_assignable_v<Type&, std::int64_t>)
 		{
 			m_data = static_cast<Type>(a_value);
+		}
+		else if constexpr (is_std_optional_assignable_v<Type, std::int64_t>)
+		{
+			m_data = static_cast<Type::value_type>(a_value);
 		}
 		else
 		{
@@ -135,6 +131,10 @@ struct ReflectiveVisitor
 		else if constexpr (std::is_trivially_assignable_v<Type&, std::uint64_t>)
 		{
 			m_data = static_cast<Type>(a_value);
+		}
+		else if constexpr (is_std_optional_assignable_v<Type, std::uint64_t>)
+		{
+			m_data = static_cast<Type::value_type>(a_value);
 		}
 		else
 		{
@@ -153,6 +153,10 @@ struct ReflectiveVisitor
 		{
 			m_data = static_cast<Type>(a_value);
 		}
+		else if constexpr (is_std_optional_assignable_v<Type, double>)
+		{
+			m_data = static_cast<Type::value_type>(a_value);
+		}
 		else
 		{
 			throw ReflectiveException::wrongType<Type, double>(std::source_location::current());
@@ -165,6 +169,10 @@ struct ReflectiveVisitor
 		{
 			m_data = a_value;
 		}
+		else if constexpr (is_std_optional_assignable_v<Type, bool>)
+		{
+			m_data = static_cast<Type::value_type>(a_value);
+		}
 		else
 		{
 			throw ReflectiveException::wrongType<Type, bool>(std::source_location::current());
@@ -173,6 +181,6 @@ struct ReflectiveVisitor
 
 	void operator()(std::nullptr_t) const
 	{
-		// todo
+		throw ReflectiveException::wrongType<Type, std::nullptr_t>(std::source_location::current());
 	}
 };

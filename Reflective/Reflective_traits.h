@@ -8,6 +8,8 @@
 #include <vector>
 #include <array>
 #include <list>
+#include <optional>
+#include <variant>
 
 // Type traits check if type is vector
 template<typename Type>
@@ -59,3 +61,47 @@ template<typename T>
 concept is_convertible = requires(const std::string_view s) {
     { convert<T>(s) } -> std::same_as<T>;
 };
+
+//-------------------------------------------------------------------------------
+// Type traits check if type is optional
+template<typename Type>
+struct is_std_optional : std::false_type {};
+
+template<typename Type>
+struct is_std_optional<std::optional<Type>> : std::true_type {};
+
+template<typename T>
+constexpr bool is_std_optional_v = is_std_optional<T>::value;
+
+template<typename T, typename U>
+concept is_std_optional_assignable_v = is_std_optional_v<T> &&
+std::is_trivially_assignable_v<typename T::value_type&, U>;
+
+template<typename T, typename U>
+concept is_std_optional_same_v = is_std_optional_v<T> &&
+std::is_same_v<typename T::value_type, U>;
+//-------------------------------------------------------------------------------
+// Type traits check if type is variant
+// not use in visitor because ex std::variant<int, double, bool> = unsigned int cause trouble
+template<typename Type>
+struct is_std_variant : std::false_type {};
+
+template<typename ...Type>
+struct is_std_variant<std::variant<Type...>> : std::true_type {};
+
+template<typename T>
+constexpr bool is_std_variant_v = is_std_variant<T>::value;
+
+template<typename ValueType, typename... Ts>
+constexpr bool is_variant_assignable(...) {
+    bool bIsAssignable = false;
+    ((bIsAssignable = bIsAssignable || std::is_same_v<Ts, ValueType> || std::is_trivially_assignable_v<Ts&, ValueType>), ...);
+    return bIsAssignable;
+}
+
+template<typename ValueType, typename... Ts>
+constexpr bool is_variant_assignable(const std::variant<Ts...>&) {
+    return is_variant_assignable<ValueType, Ts...>();
+}
+
+//-------------------------------------------------------------------------------

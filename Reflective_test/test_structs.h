@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <string_view>
+#include <optional>
+#include <variant>
 #include "Reflective_macros.h"
 #include "test_structs.generated.h"
 
@@ -69,3 +71,14 @@ struct TestLegacy : TestEnum
 	REFLECT_DEFINE(TestLegacy)
 };
 REFLECT_IMPL(TestLegacy)
+
+
+REFLECT_CLASS
+struct TestOptional
+{
+	std::optional<int> m_int;
+	std::optional<std::string> m_str;
+	REFLECT_DEFINE(TestOptional)
+};
+REFLECT_IMPL(TestOptional)
+

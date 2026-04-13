@@ -114,5 +114,18 @@ namespace Reflectivetest
 			Assert::IsTrue(EnumTest::Enum2 == legacy.m_enum);
 			Assert::AreEqual(4, legacy.m_value);
 		}
+
+		TEST_METHOD(Test_optional)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("OptionalProfile"));
+			Reflective::instance().setProfile("OptionalProfile");
+			TestOptional opt;
+
+			Assert::IsTrue(opt.m_int.has_value());
+			Assert::IsTrue(opt.m_str.has_value());
+			Assert::AreEqual(4, opt.m_int.value());
+			Assert::AreEqual(std::string("Hello world"), opt.m_str.value());
+		}
 	};
 }

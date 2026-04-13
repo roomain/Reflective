@@ -90,6 +90,43 @@
       "TestLegacy": {
         "m_valueLegacy": 3
       }
+    },
+    {
+      "Id": {
+        "name": "OptionalProfile",
+        "parent": null
+      },
+      "TestOptional": {
+        "m_str": "Hello world",
+        "m_int": 4
+      }
+    },
+    {
+      "Id": {
+        "name": "VariantProfile",
+        "parent": null
+      },
+      "TestVariant": {
+        "m_var": 3
+      }
+    },
+    {
+      "Id": {
+        "name": "VariantProfile1",
+        "parent": null
+      },
+      "TestVariant": {
+        "m_var": 3.8
+      }
+    },
+    {
+      "Id": {
+        "name": "VariantProfile2",
+        "parent": null
+      },
+      "TestVariant": {
+        "m_var": true
+      }
     }
   ]
 }
