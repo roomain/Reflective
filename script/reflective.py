@@ -67,6 +67,7 @@ class ReflectiveParser:
             file.write("#include <utility>\n")
             file.write("#include <tuple>\n")
             file.write("#include <string_view>\n")
+            file.write("#include \"Reflective.h\"\n")
             for class_name, reflective_class in self.classes.items():
                 file.write("\n\n")
                 file.write("#define REFLECT_DEF_{} \\\n".format(class_name))
@@ -106,7 +107,7 @@ class ReflectiveParser:
                     if index == (memberCount - 1):
                         tupleMakeContent += "std::make_pair(\"{}\", &{}::{})".format(member[1], class_name, member[1])
                     else:
-                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{}),".format(member[1], class_name, member[1])
+                        tupleMakeContent += "std::make_pair(\"{}\", &{}::{}), \\\n\t".format(member[1], class_name, member[1])
 
                 file.write("std::tuple<{}> {}::s_reflectiveCtx = std::make_tuple({});\n".format(tupleContent, class_name, tupleMakeContent))
 
