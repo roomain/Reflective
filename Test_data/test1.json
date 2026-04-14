@@ -127,6 +127,24 @@
       "TestVariant": {
         "m_var": true
       }
+    },
+    {
+      "Id": {
+        "name": "DefaultProfile1",
+        "parent": null
+      },
+      "TestDefault": {
+        "m_int": 2
+      }
+    },
+    {
+      "Id": {
+        "name": "DefaultProfile2",
+        "parent": null
+      },
+      "TestDefault": {
+        "m_str": "Hello world"
+      }
     }
   ]
 }

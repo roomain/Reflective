@@ -82,3 +82,12 @@ struct TestOptional
 };
 REFLECT_IMPL(TestOptional)
 
+REFLECT_CLASS
+struct TestDefault
+{
+	int m_int = 5;
+	std::string m_str = "default";
+	REFLECT_DEFINE(TestDefault)
+};
+REFLECT_IMPL(TestDefault)
+

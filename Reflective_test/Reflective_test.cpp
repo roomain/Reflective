@@ -127,5 +127,27 @@ namespace Reflectivetest
 			Assert::AreEqual(4, opt.m_int.value());
 			Assert::AreEqual(std::string("Hello world"), opt.m_str.value());
 		}
+
+		TEST_METHOD(Test_default1)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("DefaultProfile1"));
+			Reflective::instance().setProfile("DefaultProfile1");
+			TestDefault def;
+
+			Assert::AreEqual(2, def.m_int);
+			Assert::AreEqual(std::string("default"), def.m_str);
+		}
+
+		TEST_METHOD(Test_default2)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("DefaultProfile2"));
+			Reflective::instance().setProfile("DefaultProfile2");
+			TestDefault def;
+
+			Assert::AreEqual(5, def.m_int);
+			Assert::AreEqual(std::string("Hello world"), def.m_str);
+		}
 	};
 }
