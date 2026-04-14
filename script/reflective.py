@@ -12,7 +12,7 @@ reflective_pattern = (
     r'\{([^}]*)\}'
 )
 
-member_pattern = commentary_pattern + '\s*([^;]+?)\s+([a-zA-Z_]\w*)\s*(?:=\s*[^;]*)?\s*;'
+member_pattern = commentary_pattern + r'\s*([^;]+?)\s+([a-zA-Z_]\w*)\s*(?:=\s*[^;]*)?\s*;'
 
 class ReflectiveClass:
     def __init__(self, name, base_class=None):
