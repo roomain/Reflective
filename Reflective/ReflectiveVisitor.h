@@ -70,7 +70,7 @@ struct ReflectiveVisitor
 
 	void operator()(const boost::json::string& a_value) const
 	{
-		if constexpr (is_convertible<Type>)
+		if constexpr (is_convertible<Type, std::string_view>)
 		{
 			std::string_view strView(a_value.data(), a_value.size());
 			m_data = convert<Type>(strView);

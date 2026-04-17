@@ -18,5 +18,5 @@ REFLECT_DEF_##classname
 REFLECT_STATIC_IMPL_##classname
 
 // define convert function
-template<typename T>
-T convert(const std::string_view data) = delete;
+template<typename Output, typename Input>
+Output convert(const Input& a_data) = delete;

@@ -145,6 +145,15 @@
       "TestDefault": {
         "m_str": "Hello world"
       }
+    },
+    {
+      "Id": {
+        "name": "FlagProfile",
+        "parent": null
+      },
+      "TestFlag": {
+        "m_flag": "FLAG_2|FLAG_4|FLAG_1"
+      }
     }
   ]
 }

@@ -149,5 +149,21 @@ namespace Reflectivetest
 			Assert::AreEqual(5, def.m_int);
 			Assert::AreEqual(std::string("Hello world"), def.m_str);
 		}
+
+		TEST_METHOD(Test_IsConvertible)
+		{
+			Assert::IsTrue(is_convertible<EnumTest, std::string_view>);
+			Assert::IsTrue(is_convertible<unsigned int, std::string_view>);
+		}
+
+		TEST_METHOD(Test_Flags)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("FlagProfile"));
+			Reflective::instance().setProfile("FlagProfile");
+			TestFlag def;
+
+			Assert::AreEqual(static_cast<unsigned int>((1 << 2) | (1 << 4) | 1), def.m_flag);
+		}
 	};
 }

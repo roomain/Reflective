@@ -57,9 +57,9 @@ constexpr bool is_reflective_v = is_reflective<T>::value;
 
 //-------------------------------------------------------------------------------
 
-template<typename T>
-concept is_convertible = requires(const std::string_view s) {
-    { convert<T>(s) } -> std::same_as<T>;
+template<typename Output, typename Input>
+concept is_convertible = requires(const Input& s) {
+    { convert<Output, Input>(s) } -> std::same_as<Output>;
 };
 
 //-------------------------------------------------------------------------------

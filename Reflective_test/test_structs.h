@@ -3,7 +3,7 @@
 #include <vector>
 #include <string_view>
 #include <optional>
-#include <variant>
+#include <ranges>
 #include "Reflective_macros.h"
 #include "test_structs.generated.h"
 
@@ -28,7 +28,7 @@ enum class EnumTest
 };
 
 template<>
-EnumTest convert<EnumTest>(const std::string_view data)
+EnumTest convert<EnumTest, std::string_view>(const std::string_view& data)
 {
 	EnumTest converted = EnumTest::Enum0;
 	if (data == "Enum0")
@@ -91,3 +91,63 @@ struct TestDefault
 };
 REFLECT_IMPL(TestDefault)
 
+
+constexpr std::vector<std::string> split(const std::string_view a_entry, const char a_separator)
+{
+	std::string temp (a_entry);
+	std::vector<std::string> splitted;
+	while (!temp.empty())
+	{
+		if (auto iter = std::ranges::find(temp, a_separator); iter != temp.cend())
+		{
+			const size_t index = iter - temp.cbegin();
+			splitted.emplace_back(temp.substr(0, iter - temp.cbegin()));
+			temp = temp.substr(index + 1, temp.size() - index - 1);
+		}
+		else
+		{
+			splitted.emplace_back(temp);
+			temp = "";
+		}
+	}
+	return splitted;
+}
+
+template<>
+unsigned int convert<unsigned int, std::string_view>(const std::string_view& data)
+{
+	int value = 0;
+	auto flagList = split(data, '|');
+	for (const auto& flag : flagList)
+	{
+		if (flag == "FLAG_1")
+		{
+			value = value | (1 << 1);
+		}
+		else if (flag == "FLAG_2")
+		{
+			value = value | (1 << 2);
+		}
+		else if (flag == "FLAG_3")
+		{
+			value = value | (1 << 3);
+		}
+		else if (flag == "FLAG_4")
+		{
+			value = value | (1 << 4);
+		}
+		else if (flag == "FLAG_5")
+		{
+			value = value | (1 << 5);
+		}
+	}
+	return value;
+}
+
+REFLECT_CLASS
+struct TestFlag
+{
+	unsigned int m_flag = 0;
+	REFLECT_DEFINE(TestFlag)
+};
+REFLECT_IMPL(TestFlag)
