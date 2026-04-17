@@ -1,4 +1,5 @@
-#Reflective
+# Reflective
+
 Reflective is a tiny library to deserialize json data into c++ structure.
 The json file describe structures for specific profiles. 
 A profile can herits and overload from another one.
@@ -46,7 +47,7 @@ Your file must include the future generated file named <your_filename>.generated
 #pragma once
 #include <string>
 #include <vector>
-#include "Reflective_macros.h"              // for reflective macros
+#include "Reflective_macros.h"    // for reflective macros
 #include "Simple.generated.h"     // generated file
 
 REFLECT_CLASS
@@ -89,3 +90,6 @@ Reflective::instance().hasProfile("SimpleReflective");
 
 ## Limitation
 - Reflective can't deserialize data for std::variant.
+
+## Dependancies
+* Boost 1_90_0
