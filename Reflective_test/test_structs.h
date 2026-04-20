@@ -140,6 +140,10 @@ unsigned int convert<unsigned int, std::string_view>(const std::string_view& dat
 		{
 			value = value | (1 << 5);
 		}
+		else
+		{
+			//todo throw exception
+		}
 	}
 	return value;
 }
@@ -151,3 +155,81 @@ struct TestFlag
 	REFLECT_DEFINE(TestFlag)
 };
 REFLECT_IMPL(TestFlag)
+
+// test for vulkan flag
+typedef enum VkQueueFlagBits {
+	VK_QUEUE_GRAPHICS_BIT = 0x00000001,
+	VK_QUEUE_COMPUTE_BIT = 0x00000002,
+	VK_QUEUE_TRANSFER_BIT = 0x00000004,
+	VK_QUEUE_SPARSE_BINDING_BIT = 0x00000008,
+	VK_QUEUE_PROTECTED_BIT = 0x00000010,
+	VK_QUEUE_VIDEO_DECODE_BIT_KHR = 0x00000020,
+	VK_QUEUE_VIDEO_ENCODE_BIT_KHR = 0x00000040,
+	VK_QUEUE_OPTICAL_FLOW_BIT_NV = 0x00000100,
+	VK_QUEUE_DATA_GRAPH_BIT_ARM = 0x00000400,
+	VK_QUEUE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF
+} VkQueueFlagBits;
+
+constexpr VkQueueFlagBits operator | (const  VkQueueFlagBits a_flag0, const  VkQueueFlagBits a_flag1)
+{
+	return static_cast<VkQueueFlagBits>(static_cast<unsigned int>(a_flag0) | static_cast<unsigned int>(a_flag1));
+}
+
+template<>
+VkQueueFlagBits convert<VkQueueFlagBits, std::string_view>(const std::string_view& data)
+{
+	VkQueueFlagBits value = static_cast<VkQueueFlagBits>(0);
+	auto flagList = split(data, '|');
+	for (const auto& flag : flagList)
+	{
+		if (flag == "VK_QUEUE_GRAPHICS_BIT")
+		{
+			value = value | VK_QUEUE_GRAPHICS_BIT;
+		}
+		else if (flag == "VK_QUEUE_COMPUTE_BIT")
+		{
+			value = value | VK_QUEUE_COMPUTE_BIT;
+		}
+		else if (flag == "VK_QUEUE_TRANSFER_BIT")
+		{
+			value = value | VK_QUEUE_TRANSFER_BIT;
+		}
+		else if (flag == "VK_QUEUE_SPARSE_BINDING_BIT")
+		{
+			value = value | VK_QUEUE_SPARSE_BINDING_BIT;
+		}
+		else if (flag == "VK_QUEUE_PROTECTED_BIT")
+		{
+			value = value | VK_QUEUE_PROTECTED_BIT;
+		}
+		else if (flag == "VK_QUEUE_VIDEO_DECODE_BIT_KHR")
+		{
+			value = value | VK_QUEUE_VIDEO_DECODE_BIT_KHR;
+		}
+		else if (flag == "VK_QUEUE_VIDEO_ENCODE_BIT_KHR")
+		{
+			value = value | VK_QUEUE_VIDEO_ENCODE_BIT_KHR;
+		}
+		else if (flag == "VK_QUEUE_OPTICAL_FLOW_BIT_NV")
+		{
+			value = value | VK_QUEUE_OPTICAL_FLOW_BIT_NV;
+		}
+		else if (flag == "VK_QUEUE_DATA_GRAPH_BIT_ARM")
+		{
+			value = value | VK_QUEUE_DATA_GRAPH_BIT_ARM;
+		}
+		else
+		{
+			//todo throw exception
+		}
+	}
+	return value;
+}
+
+REFLECT_CLASS
+struct TestVulkanFlag
+{
+	VkQueueFlagBits m_flag = static_cast<VkQueueFlagBits>(0);
+	REFLECT_DEFINE(TestVulkanFlag)
+};
+REFLECT_IMPL(TestVulkanFlag)

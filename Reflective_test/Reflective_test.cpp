@@ -163,7 +163,19 @@ namespace Reflectivetest
 			Reflective::instance().setProfile("FlagProfile");
 			TestFlag def;
 
-			Assert::AreEqual(static_cast<unsigned int>((1 << 2) | (1 << 4) | 1), def.m_flag);
+			Assert::AreEqual(static_cast<unsigned int>((1 << 2) | (1 << 4) | (1 << 1)), def.m_flag);
+		}
+
+		TEST_METHOD(Test_VulkanFlags)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("FlagVulkanProfile"));
+			Reflective::instance().setProfile("FlagVulkanProfile");
+			TestVulkanFlag def;
+
+			Assert::AreEqual(
+				static_cast<unsigned int>(VK_QUEUE_COMPUTE_BIT | VK_QUEUE_PROTECTED_BIT | VK_QUEUE_DATA_GRAPH_BIT_ARM),
+				static_cast<unsigned int>(def.m_flag));
 		}
 	};
 }

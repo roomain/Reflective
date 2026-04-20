@@ -154,6 +154,15 @@
       "TestFlag": {
         "m_flag": "FLAG_2|FLAG_4|FLAG_1"
       }
+    },
+    {
+      "Id": {
+        "name": "FlagVulkanProfile",
+        "parent": null
+      },
+      "TestVulkanFlag": {
+        "m_flag": "VK_QUEUE_COMPUTE_BIT|VK_QUEUE_PROTECTED_BIT|VK_QUEUE_DATA_GRAPH_BIT_ARM"
+      }
     }
   ]
 }
