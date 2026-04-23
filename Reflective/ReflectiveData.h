@@ -11,6 +11,7 @@
 #include <stack>
 #include <tuple>
 #include <boost/json.hpp>
+#include "Reflective_traits.h"
 #include "ReflectiveVisitor.h"
 
 struct JsonReflectiveProfileData
@@ -33,6 +34,27 @@ private:
 
 	std::vector<JsonReflectiveProfileData> m_reflectProfiles;
 	void readProfile(const boost::json::object& a_profile);
+	
+	template<typename Type>
+	void serialize(boost::json::object& a_json, const std::string_view a_memberName, const Type& a_data)
+	{
+		// double
+		// uint64_t
+		// int64_t
+		// string
+		// array
+		// object
+	}
+
+	template<typename Object, typename ...Args>
+	void serialize(boost::json::object& a_jsonObject, Object& a_object, const std::tuple<Args...>& a_accessMembers)
+	{
+		std::apply(
+			[&a_jsonObject, &a_object, this](Args&... tupleArgs)
+			{
+				(serialize(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
+			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
+	}
 
 public:
 
@@ -62,5 +84,22 @@ public:
 			{
 				(deserialize(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
 			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
+	}
+
+	
+	template<typename Object> requires is_reflective_v<Object>
+	void writeProfile(const std::string_view a_profile, const Object& a_data)
+	{
+		auto iter = std::ranges::find_if(m_reflectProfiles, [&a_profile](const auto& a_profileData)
+			{
+				return a_profileData.profile.compare(a_profile) == 0;
+			});
+		if ( iter == m_reflectProfiles.cend())
+		{
+			iter = m_reflectProfiles.emplace(JsonReflectiveProfileData{ a_profile });
+		}
+		
+		auto object = iter->m_classes[type_name<Object>()];
+		deserialize(object, a_data, Object::s_reflectiveCtx);
 	}
 };

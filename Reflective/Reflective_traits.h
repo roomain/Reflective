@@ -55,6 +55,15 @@ struct is_reflective<T, std::void_t<decltype(&T::s_reflectiveCtx)> > : std::true
 template<typename T>
 constexpr bool is_reflective_v = is_reflective<T>::value;
 
+template<typename, typename = std::void_t<>>
+struct is_optional_reflective : std::false_type {};
+
+template<typename T>
+struct is_optional_reflective<std::optional<T>, std::void_t<decltype(&T::s_reflectiveCtx)> > : std::true_type {};
+
+template<typename T>
+constexpr bool is_optional_reflective_v = is_optional_reflective<T>::value;
+
 //-------------------------------------------------------------------------------
 
 template<typename Output, typename Input>

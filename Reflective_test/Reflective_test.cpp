@@ -177,5 +177,26 @@ namespace Reflectivetest
 				static_cast<unsigned int>(VK_QUEUE_COMPUTE_BIT | VK_QUEUE_PROTECTED_BIT | VK_QUEUE_DATA_GRAPH_BIT_ARM),
 				static_cast<unsigned int>(def.m_flag));
 		}
+
+		TEST_METHOD(Test_VulkanOptFlags)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("FlagVulkanOptProfile"));
+			Reflective::instance().setProfile("FlagVulkanOptProfile");
+			TestOptionalVulkanFlag def;
+
+			Assert::IsFalse(def.m_opt.has_value());
+		}
+
+		TEST_METHOD(Test_VulkanOptFlags1)
+		{
+			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\test1.json)"));
+			Assert::IsTrue(Reflective::instance().hasProfile("FlagVulkanOptProfile1"));
+			Reflective::instance().setProfile("FlagVulkanOptProfile1");
+			TestOptionalVulkanFlag def;
+
+			Assert::IsTrue(def.m_opt.has_value());
+			Assert::IsTrue(def.m_opt.value().m_flag == VK_QUEUE_COMPUTE_BIT);
+		}
 	};
 }

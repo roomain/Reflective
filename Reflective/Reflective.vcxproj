@@ -147,6 +147,7 @@
     <ClInclude Include="ReflectiveData.h" />
     <ClInclude Include="ReflectiveException.h" />
     <ClInclude Include="ReflectiveVisitor.h" />
+    <ClInclude Include="Reflective_assign.h" />
     <ClInclude Include="Reflective_macros.h" />
     <ClInclude Include="Reflective_traits.h" />
   </ItemGroup>

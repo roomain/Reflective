@@ -163,6 +163,31 @@
       "TestVulkanFlag": {
         "m_flag": "VK_QUEUE_COMPUTE_BIT|VK_QUEUE_PROTECTED_BIT|VK_QUEUE_DATA_GRAPH_BIT_ARM"
       }
+    },
+    {
+      "Id": {
+        "name": "FlagVulkanOptProfile",
+        "parent": null
+      },
+      "TestVulkanFlag": {
+        "m_flag": "VK_QUEUE_COMPUTE_BIT|VK_QUEUE_PROTECTED_BIT|VK_QUEUE_DATA_GRAPH_BIT_ARM"
+      },
+      "TestOptionalVulkanFlag": {
+      }
+    },
+    {
+      "Id": {
+        "name": "FlagVulkanOptProfile1",
+        "parent": null
+      },
+      "TestVulkanFlag": {
+        "m_flag": "VK_QUEUE_COMPUTE_BIT|VK_QUEUE_PROTECTED_BIT|VK_QUEUE_DATA_GRAPH_BIT_ARM"
+      },
+      "TestOptionalVulkanFlag": {
+        "m_opt":{
+          "m_flag": "VK_QUEUE_COMPUTE_BIT"
+        }
+      }
     }
   ]
 }

@@ -27,6 +27,11 @@ struct ReflectiveVisitor
 		{
 			m_reflectData.get().deserialize(a_value, m_data, Type::s_reflectiveCtx);
 		}
+		else if constexpr (is_optional_reflective_v<Type>)
+		{
+			m_data = Type::value_type();
+			m_reflectData.get().deserialize(a_value, m_data.value(), Type::value_type::s_reflectiveCtx);
+		}
 		else
 		{
 			throw ReflectiveException::typeNotReflective<Type>(std::source_location::current());
@@ -141,7 +146,6 @@ struct ReflectiveVisitor
 			throw ReflectiveException::wrongType<Type, std::uint64_t>(std::source_location::current());
 		}
 	}
-
 
 	void operator()(const double& a_value) const
 	{

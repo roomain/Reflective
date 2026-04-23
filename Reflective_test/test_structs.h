@@ -233,3 +233,11 @@ struct TestVulkanFlag
 	REFLECT_DEFINE(TestVulkanFlag)
 };
 REFLECT_IMPL(TestVulkanFlag)
+
+REFLECT_CLASS
+struct TestOptionalVulkanFlag
+{
+	std::optional<TestVulkanFlag> m_opt;
+	REFLECT_DEFINE(TestOptionalVulkanFlag)
+};
+REFLECT_IMPL(TestOptionalVulkanFlag)
