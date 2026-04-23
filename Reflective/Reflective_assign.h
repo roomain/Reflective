@@ -16,7 +16,7 @@ constexpr bool assign_bool(boost::json::object& a_object, const std::string_view
 		bRet = true;
 		a_object[a_memberName] = a_value;
 	}
-	else if constexpr (std::is_std_optional<bool>)
+	else if constexpr (is_std_optional_v<bool>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -39,13 +39,13 @@ constexpr bool assign_double(boost::json::object& a_object, const std::string_vi
 		bRet = true;
 		a_object[a_memberName] = static_cast<double>(a_value);
 	}
-	else if constexpr (std::is_std_optional_v<double>)
+	else if constexpr (is_std_optional_v<double>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = a_value.value();
 	}
-	else if constexpr (std::is_std_optional<float>)
+	else if constexpr (is_std_optional_v<float>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -78,25 +78,25 @@ constexpr bool assign_uint(boost::json::object& a_object, const std::string_view
 		bRet = true;
 		a_object[a_memberName] = static_cast<uint64_t>(a_value);
 	}
-	else if constexpr (std::is_std_optional_v<uint64_t>)
+	else if constexpr (is_std_optional_v<uint64_t>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = a_value.value();
 	}
-	else if constexpr (std::is_std_optional<unsigned int>)
+	else if constexpr (is_std_optional_v<unsigned int>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = static_cast<uint64_t>(a_value.value());
 	}
-	else if constexpr (std::is_std_optional_v<unsigned long>)
+	else if constexpr (is_std_optional_v<unsigned long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = static_cast<uint64_t>(a_value.value());
 	}
-	else if constexpr (std::is_std_optional<unsigned long long>)
+	else if constexpr (is_std_optional_v<unsigned long long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -129,25 +129,25 @@ constexpr bool assign_int(boost::json::object& a_object, const std::string_view 
 		bRet = true;
 		a_object[a_memberName] = static_cast<int64_t>(a_value);
 	}
-	else if constexpr (std::is_std_optional_v<int64_t>)
+	else if constexpr (is_std_optional_v<int64_t>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = a_value.value();
 	}
-	else if constexpr (std::is_std_optional<int>)
+	else if constexpr (is_std_optional_v<int>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = static_cast<int64_t>(a_value.value());
 	}
-	else if constexpr (std::is_std_optional_v<long>)
+	else if constexpr (is_std_optional_v<long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
 			a_object[a_memberName] = static_cast<int64_t>(a_value.value());
 	}
-	else if constexpr (std::is_std_optional<long long>)
+	else if constexpr (is_std_optional_v<long long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -170,28 +170,31 @@ constexpr bool assign_string(boost::json::object& a_object, const std::string_vi
 		bRet = true;
 		a_object[a_memberName] = a_value;
 	}
-	else if constexpr (is_std_optional<std::string>)
+	else if constexpr (is_std_optional_v<std::string>)
 	{
 		bRet = true;
 		if(a_value.has_value())
-			m_data = a_value.value();
+			a_object[a_memberName] = a_value.value();
 	}
 	return bRet;
 }
 
-template<typename Type>
-constexpr bool assign_object(boost::json::object& a_object, const std::string_view a_memberName, const Type& a_value)
+template<typename Type, typename Serializer>
+constexpr bool assign_object(boost::json::object& a_object, const std::string_view a_memberName, const Type& a_value, Serializer* const a_reflective)
 {
 	bool bRet = false;
 	if constexpr (is_reflective_v<Type>)
 	{
-		//
+		bRet = true;
+		a_reflective->serialize(a_object[a_memberName], a_value, Type::s_reflectiveCtx);
 	}
 	else if (is_optional_reflective_v<Type>)
 	{
-		//
+		bRet = true;
+		if (a_value.has_value())
+			bRet = assign_object(a_object, a_memberName, a_value.value(), a_reflective);
 	}
-	return false;
+	return bRet;
 }
 
 template<typename Type>

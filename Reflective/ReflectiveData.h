@@ -13,6 +13,7 @@
 #include <boost/json.hpp>
 #include "Reflective_traits.h"
 #include "ReflectiveVisitor.h"
+#include "Reflective_assign.h"
 
 struct JsonReflectiveProfileData
 {
@@ -46,15 +47,6 @@ private:
 		// object
 	}
 
-	template<typename Object, typename ...Args>
-	void serialize(boost::json::object& a_jsonObject, Object& a_object, const std::tuple<Args...>& a_accessMembers)
-	{
-		std::apply(
-			[&a_jsonObject, &a_object, this](Args&... tupleArgs)
-			{
-				(serialize(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
-			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
-	}
 
 public:
 
@@ -86,6 +78,15 @@ public:
 			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
 	}
 
+	template<typename Object, typename ...Args>
+	void serialize(boost::json::object& a_jsonObject, Object& a_object, const std::tuple<Args...>& a_accessMembers)
+	{
+		std::apply(
+			[&a_jsonObject, &a_object, this](Args&... tupleArgs)
+			{
+				(serialize(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
+			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
+	}
 	
 	template<typename Object> requires is_reflective_v<Object>
 	void writeProfile(const std::string_view a_profile, const Object& a_data)
