@@ -28,7 +28,7 @@ enum class EnumTest
 };
 
 template<>
-EnumTest convert<EnumTest, std::string_view>(const std::string_view& data)
+constexpr EnumTest convert<EnumTest, std::string_view>(const std::string_view& data)
 {
 	EnumTest converted = EnumTest::Enum0;
 	if (data == "Enum0")
@@ -114,7 +114,7 @@ constexpr std::vector<std::string> split(const std::string_view a_entry, const c
 }
 
 template<>
-unsigned int convert<unsigned int, std::string_view>(const std::string_view& data)
+constexpr unsigned int convert<unsigned int, std::string_view>(const std::string_view& data)
 {
 	int value = 0;
 	auto flagList = split(data, '|');
@@ -176,7 +176,7 @@ constexpr VkQueueFlagBits operator | (const  VkQueueFlagBits a_flag0, const  VkQ
 }
 
 template<>
-VkQueueFlagBits convert<VkQueueFlagBits, std::string_view>(const std::string_view& data)
+constexpr VkQueueFlagBits convert<VkQueueFlagBits, std::string_view>(const std::string_view& data)
 {
 	VkQueueFlagBits value = static_cast<VkQueueFlagBits>(0);
 	auto flagList = split(data, '|');

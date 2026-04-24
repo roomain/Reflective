@@ -5,7 +5,7 @@
   "ClassArray": [
     {
       "Id": {
-        "name": "Test1",
+        "name": "Test_simple",
         "parent": null
       },
       "TestStructIntern": {
@@ -17,8 +17,8 @@
     },
     {
       "Id": {
-        "name": "Test2",
-        "parent": "Test1"
+        "name": "Test_profile_legacy",
+        "parent": "Test_simple"
       },
       "TestStructIntern": {
         "m_bool": false,
@@ -28,8 +28,8 @@
     },
     {
       "Id": {
-        "name": "TestIntern",
-        "parent": null
+        "name": "Test_profile_override",
+        "parent": "Test_profile_legacy"
       },
       "TestStructIntern": {
         "m_bool": true,
@@ -40,7 +40,7 @@
     },
     {
       "Id": {
-        "name": "EnumProfile",
+        "name": "Test_enum_as_string",
         "parent": null
       },
       "TestEnum": {
@@ -50,7 +50,7 @@
     },
     {
       "Id": {
-        "name": "NestedProfile",
+        "name": "Test_nested_struct",
         "parent": null
       },
       "TestEnum": {
@@ -63,7 +63,7 @@
     },
     {
       "Id": {
-        "name": "NestedProfile2",
+        "name": "Test_nested_struct_overriden",
         "parent": null
       },
       "TestEnum": {
@@ -80,7 +80,7 @@
     },
     {
       "Id": {
-        "name": "LegacyProfile",
+        "name": "Test_struct_legacy",
         "parent": null
       },
       "TestEnum": {
@@ -93,7 +93,7 @@
     },
     {
       "Id": {
-        "name": "OptionalProfile",
+        "name": "Test_optional",
         "parent": null
       },
       "TestOptional": {
@@ -103,34 +103,7 @@
     },
     {
       "Id": {
-        "name": "VariantProfile",
-        "parent": null
-      },
-      "TestVariant": {
-        "m_var": 3
-      }
-    },
-    {
-      "Id": {
-        "name": "VariantProfile1",
-        "parent": null
-      },
-      "TestVariant": {
-        "m_var": 3.8
-      }
-    },
-    {
-      "Id": {
-        "name": "VariantProfile2",
-        "parent": null
-      },
-      "TestVariant": {
-        "m_var": true
-      }
-    },
-    {
-      "Id": {
-        "name": "DefaultProfile1",
+        "name": "Test_struct_default_string",
         "parent": null
       },
       "TestDefault": {
@@ -139,7 +112,7 @@
     },
     {
       "Id": {
-        "name": "DefaultProfile2",
+        "name": "Test_struct_default_int",
         "parent": null
       },
       "TestDefault": {
@@ -148,7 +121,7 @@
     },
     {
       "Id": {
-        "name": "FlagProfile",
+        "name": "Test_flags_as_string",
         "parent": null
       },
       "TestFlag": {
@@ -157,7 +130,7 @@
     },
     {
       "Id": {
-        "name": "FlagVulkanProfile",
+        "name": "Test_VulkanFlags_as_string",
         "parent": null
       },
       "TestVulkanFlag": {
@@ -166,7 +139,7 @@
     },
     {
       "Id": {
-        "name": "FlagVulkanOptProfile",
+        "name": "Test_optional_VulkanFlags_as_string_no_value",
         "parent": null
       },
       "TestVulkanFlag": {
@@ -177,7 +150,7 @@
     },
     {
       "Id": {
-        "name": "FlagVulkanOptProfile1",
+        "name": "Test_optional_VulkanFlags_as_string_has_value",
         "parent": null
       },
       "TestVulkanFlag": {

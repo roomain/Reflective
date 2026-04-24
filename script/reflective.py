@@ -83,24 +83,19 @@ class ReflectiveParser:
                     else:
                         tupleContent += "\t\t\tstd::pair<std::string_view, {} {}::*>, \\\n".format(member[0], class_name)
 
-                file.write("static std::tuple<{}> s_reflectiveCtx; \\\n \\\n".format(tupleContent))
+                file.write("public: \\\n")
+                file.write("static inline std::tuple<{}> s_reflectiveCtx; \\\n \\\n".format(tupleContent))
+                file.write("private: \\\n")
+                file.write("static inline bool s_init = false; \\\n")
+                file.write("public: \\\n")
 
 
                 #################################################################################################################
                 file.write("inline {}() \\\n".format(class_name))
-                file.write("{ \\\n")
-                #file.write("\tif(!{}::s_deserialized) \\\n".format(class_name))
-                #file.write("\t{ \\\n")
-                #file.write("\t\t{}::s_deserialized = Reflective::instance().deserialize(\"{}\",{}::s_reference); \\\n".format(class_name, class_name, class_name))
-                #file.write("\t} \\\n")
-                #file.write("\t*this = s_reference; \\\n")       
-                file.write("\tReflective::instance().deserialize(\"{}\",*this); \\\n".format(class_name))
-                file.write("}\n")
-                #################################################################################################################
-                file.write("\n\n")
-                file.write("#define REFLECT_STATIC_IMPL_{} \\\n".format(class_name))
-                #file.write("{} {}::s_reference; \\\n".format(class_name, class_name))
-                
+                file.write("{ \\\n") 
+                file.write("\tif(!{}::s_init) \\\n".format(class_name))
+                file.write("\t{ \\\n")
+
                 tupleMakeContent = ""
                 for index in range(memberCount):
                     member = reflective_class.members[index]
@@ -109,7 +104,17 @@ class ReflectiveParser:
                     else:
                         tupleMakeContent += "std::make_pair(\"{}\", &{}::{}), \\\n\t".format(member[1], class_name, member[1])
 
-                file.write("std::tuple<{}> {}::s_reflectiveCtx = std::make_tuple({});\n".format(tupleContent, class_name, tupleMakeContent))
+                file.write("\t\t{}::s_reflectiveCtx = std::make_tuple({}); \\\n".format(class_name, tupleMakeContent))
+
+                file.write("\t\t {}::s_init = true; \\\n".format(class_name))
+                file.write("\t} \\\n")
+                file.write("\tReflective::instance().deserialize(\"{}\",*this); \\\n".format(class_name))
+                file.write("}\n")
+                #################################################################################################################
+                file.write("\n\n")
+                file.write("#define REFLECT_STATIC_IMPL_{} \\\n".format(class_name))
+                
+                
 
 
 
