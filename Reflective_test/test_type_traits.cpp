@@ -51,6 +51,44 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(is_convertible<EnumTest, std::string_view>);
 			Assert::IsTrue(is_convertible<unsigned int, std::string_view>);
+			struct TestNotConvertible
+			{
+				int notConvertible;
+			};
+			Assert::IsFalse(is_convertible<TestNotConvertible, std::string_view>);
+		}
+
+		TEST_METHOD(Test_IsReflective)
+		{
+			struct TestNotReflective
+			{
+				int notReflective;
+			};
+			Assert::IsFalse(is_reflective_v<int>);
+			Assert::IsFalse(is_reflective_v<TestNotReflective>);
+			Assert::IsTrue(is_reflective_v<TestOptionalVulkanFlag>);
+		}
+
+		TEST_METHOD(Test_IsOptionalReflective)
+		{
+			struct TestNotReflective
+			{
+				int notReflective;
+			};
+			Assert::IsFalse(is_optional_reflective_v<int>);
+			Assert::IsFalse(is_optional_reflective_v<TestNotReflective>);
+			Assert::IsTrue(is_optional_reflective_v<std::optional<TestOptionalVulkanFlag>>);
+		}
+
+		TEST_METHOD(Test_IsOptional)
+		{
+			struct TestNotReflective
+			{
+				int notReflective;
+			};
+			Assert::IsFalse(is_std_optional_v<int>);
+			Assert::IsFalse(is_std_optional_v<TestNotReflective>);
+			Assert::IsTrue(is_std_optional_v<std::optional<TestOptionalVulkanFlag>>);
 		}
 	};
 }

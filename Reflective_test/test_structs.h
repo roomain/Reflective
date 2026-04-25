@@ -18,7 +18,6 @@ struct TestStructIntern
 	REFLECT_DEFINE(TestStructIntern)
 
 };
-REFLECT_IMPL(TestStructIntern)
 
 enum class EnumTest
 {
@@ -53,7 +52,6 @@ struct TestEnum
 	int m_value;
 	REFLECT_DEFINE(TestEnum)
 };
-REFLECT_IMPL(TestEnum)
 
 REFLECT_CLASS
 struct TestNested
@@ -62,7 +60,6 @@ struct TestNested
 	int m_value;
 	REFLECT_DEFINE(TestNested)
 };
-REFLECT_IMPL(TestNested)
 
 REFLECT_CLASS
 struct TestLegacy : TestEnum
@@ -70,7 +67,6 @@ struct TestLegacy : TestEnum
 	int m_valueLegacy;
 	REFLECT_DEFINE(TestLegacy)
 };
-REFLECT_IMPL(TestLegacy)
 
 
 REFLECT_CLASS
@@ -80,7 +76,6 @@ struct TestOptional
 	std::optional<std::string> m_str;
 	REFLECT_DEFINE(TestOptional)
 };
-REFLECT_IMPL(TestOptional)
 
 REFLECT_CLASS
 struct TestDefault
@@ -89,7 +84,6 @@ struct TestDefault
 	std::string m_str = "default";
 	REFLECT_DEFINE(TestDefault)
 };
-REFLECT_IMPL(TestDefault)
 
 
 constexpr std::vector<std::string> split(const std::string_view a_entry, const char a_separator)
@@ -154,7 +148,6 @@ struct TestFlag
 	unsigned int m_flag = 0;
 	REFLECT_DEFINE(TestFlag)
 };
-REFLECT_IMPL(TestFlag)
 
 // test for vulkan flag
 typedef enum VkQueueFlagBits {
@@ -232,7 +225,6 @@ struct TestVulkanFlag
 	VkQueueFlagBits m_flag = static_cast<VkQueueFlagBits>(0);
 	REFLECT_DEFINE(TestVulkanFlag)
 };
-REFLECT_IMPL(TestVulkanFlag)
 
 REFLECT_CLASS
 struct TestOptionalVulkanFlag
@@ -240,4 +232,3 @@ struct TestOptionalVulkanFlag
 	std::optional<TestVulkanFlag> m_opt;
 	REFLECT_DEFINE(TestOptionalVulkanFlag)
 };
-REFLECT_IMPL(TestOptionalVulkanFlag)

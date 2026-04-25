@@ -91,6 +91,7 @@ class ReflectiveParser:
 
 
                 #################################################################################################################
+                file.write(f'static constexpr std::string reflectiveName(){{ return "{class_name}"; }} \\\n')
                 file.write("inline {}() \\\n".format(class_name))
                 file.write("{ \\\n") 
                 file.write("\tif(!{}::s_init) \\\n".format(class_name))
@@ -111,8 +112,7 @@ class ReflectiveParser:
                 file.write("\tReflective::instance().deserialize(\"{}\",*this); \\\n".format(class_name))
                 file.write("}\n")
                 #################################################################################################################
-                file.write("\n\n")
-                file.write("#define REFLECT_STATIC_IMPL_{} \\\n".format(class_name))
+                
                 
                 
 

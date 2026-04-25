@@ -1,7 +1,7 @@
 {
-    "$shema" : "not_yet_rated",
-    "title" : "test_reflective",
-    "include": [],
+  "$shema" : "not_yet_rated",
+  "title" : "test_reflective",
+  "include": [],
   "ClassArray": [
     {
       "Id": {

@@ -36,27 +36,17 @@ private:
 	std::vector<JsonReflectiveProfileData> m_reflectProfiles;
 	void readProfile(const boost::json::object& a_profile);
 	
-	template<typename Type>
-	void serialize(boost::json::object& a_json, const std::string_view a_memberName, const Type& a_data)
-	{
-		// double
-		// uint64_t
-		// int64_t
-		// string
-		// array
-		// object
-	}
-
-
 public:
 
 	using const_iterator = std::vector<JsonReflectiveProfileData>::const_iterator;
 	constexpr const_iterator cbegin()const { return m_reflectProfiles.cbegin(); }
 	constexpr const_iterator cend()const { return m_reflectProfiles.cend(); }
-
+	void clear() { m_reflectProfiles.clear(); }
 	bool loadFile(const std::string& a_file, LogCallback a_logCallback);
+	bool writeFile(const std::string& a_file, const bool a_ident = false)const;
 	const_iterator findProfile(const std::string_view a_profileName)const;
 	bool hasProfile(const std::string_view a_profileName)const;
+	void setParentProfile(const std::string_view a_profile, const std::string_view a_parent);
 	std::stack<const_iterator> parentProfiles(const std::string& a_profile, const std::string& a_classname, LogCallback a_logCallback)const;
 
 	template<typename Type>
@@ -78,13 +68,25 @@ public:
 			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
 	}
 
+	template<typename Type>
+	constexpr bool serializeData(boost::json::object& a_json, const std::string_view a_memberName, const Type& a_data)
+	{
+		return assign_object(a_json, a_memberName, a_data, this)
+			|| assign_bool(a_json, a_memberName, a_data)
+			|| assign_double(a_json, a_memberName, a_data)
+			|| assign_int(a_json, a_memberName, a_data)
+			|| assign_uint(a_json, a_memberName, a_data)
+			|| assign_string(a_json, a_memberName, a_data)
+			|| assign_array(a_json, a_memberName, a_data, this);
+	}
+
 	template<typename Object, typename ...Args>
-	void serialize(boost::json::object& a_jsonObject, Object& a_object, const std::tuple<Args...>& a_accessMembers)
+	void serialize(boost::json::object& a_jsonObject, Object& a_object, std::tuple<Args...>& a_accessMembers)
 	{
 		std::apply(
 			[&a_jsonObject, &a_object, this](Args&... tupleArgs)
 			{
-				(serialize(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
+				(serializeData(a_jsonObject, tupleArgs.first, a_object.*(tupleArgs.second)), ...);
 			}, a_accessMembers/*std::forward<std::tuple<Args...>>(a_accessMembers)*/);
 	}
 	
@@ -97,10 +99,12 @@ public:
 			});
 		if ( iter == m_reflectProfiles.cend())
 		{
-			iter = m_reflectProfiles.emplace(JsonReflectiveProfileData{ a_profile });
+			JsonReflectiveProfileData profile{ .profile = std::string(a_profile) };
+			m_reflectProfiles.emplace_back(std::move(profile));
+			iter = m_reflectProfiles.end() - 1;
 		}
 		
-		auto object = iter->m_classes[type_name<Object>()];
-		deserialize(object, a_data, Object::s_reflectiveCtx);
+		auto& object = iter->m_classes[Object::reflectiveName()];
+		serialize(object, a_data, Object::s_reflectiveCtx);
 	}
 };

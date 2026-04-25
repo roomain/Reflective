@@ -3,6 +3,37 @@
 #include <format>
 #include "ReflectiveData.h"
 
+void pretty_print(const boost::json::value& jv, std::ostream& os, int indent = 0) {
+	const std::string indent_str(indent, ' ');
+
+	if (jv.is_object()) {
+		os << "{\n";
+		const auto& obj = jv.as_object();
+		bool first = true;
+		for (const auto& [key, val] : obj) {
+			if (!first) os << ",\n";
+			os << std::string(indent + 2, ' ') << "\"" << key << "\": ";
+			pretty_print(val, os, indent + 2);
+			first = false;
+		}
+		os << "\n" << indent_str << "}";
+	}
+	else if (jv.is_array()) {
+		os << "[\n";
+		const auto& arr = jv.as_array();
+		for (size_t i = 0; i < arr.size(); ++i) {
+			os << std::string(indent + 2, ' ');
+			pretty_print(arr[i], os, indent + 2);
+			if (i < arr.size() - 1) os << ",";
+			os << "\n";
+		}
+		os << indent_str << "]";
+	}
+	else {
+		os << boost::json::serialize(jv);
+	}
+}
+
 bool ReflectiveJsonFileData::loadFile(const std::string& a_file, LogCallback a_logCallback)
 {
 	m_reflectProfiles.clear();
@@ -36,6 +67,53 @@ bool ReflectiveJsonFileData::loadFile(const std::string& a_file, LogCallback a_l
 	return true;
 }
 
+bool ReflectiveJsonFileData::writeFile(const std::string& a_file, const bool a_ident)const
+{
+	std::ofstream jsonFile(a_file);
+	if (!jsonFile)
+		return false;
+
+	boost::json::object root;
+	root["$shema"] = "not_yet_rated";
+	root["title"] = "Reflective";
+	root["include"] = boost::json::array();
+	boost::json::array profiles;
+	for (auto& profile : m_reflectProfiles)
+	{
+		boost::json::object profileObj;
+
+		boost::json::object idObj;
+		idObj[PROFILE_NAME_ATT] = profile.profile;
+
+		if(profile.parent.empty())
+			idObj[PROFILE_PARENT_ATT] = nullptr;
+		else
+			idObj[PROFILE_PARENT_ATT] = profile.parent;
+
+		profileObj[PROFILE_NODE] = idObj;
+
+		for (auto& [name, jsonStruct] : profile.m_classes)
+		{
+			boost::json::object current;
+			profileObj[name] = jsonStruct;
+		}
+		profiles.emplace_back(profileObj);
+	}
+	root[CLASS_ARRAY] = profiles;
+
+	if (a_ident)
+	{
+		pretty_print(root, jsonFile, 4);
+	}
+	else
+	{
+		jsonFile << boost::json::serialize(root);
+	}
+	jsonFile.close();
+
+	return true;
+}
+
 void ReflectiveJsonFileData::readProfile(const boost::json::object& a_profile)
 {
 	JsonReflectiveProfileData reflectProfile;
@@ -64,7 +142,7 @@ void ReflectiveJsonFileData::readProfile(const boost::json::object& a_profile)
 
 ReflectiveJsonFileData::const_iterator ReflectiveJsonFileData::findProfile(const std::string_view a_profileName)const
 {
-	return std::ranges::find_if(m_reflectProfiles.cbegin(), m_reflectProfiles.cend(), [a_profileName](const auto& a_profile)
+	return std::ranges::find_if(m_reflectProfiles, [a_profileName](const auto& a_profile)
 		{
 			return a_profile.profile.compare(a_profileName) == 0;
 		});
@@ -111,4 +189,13 @@ std::stack<ReflectiveJsonFileData::const_iterator> ReflectiveJsonFileData::paren
 		iter = ReflectiveJsonFileData::findProfile(iter->parent);
 	}
 	return profileStack;
+}
+
+void ReflectiveJsonFileData::setParentProfile(const std::string_view a_profile, const std::string_view a_parent)
+{
+	auto iter = std::ranges::find_if(m_reflectProfiles, [a_profile](const auto& a_profileJson)
+		{
+			return a_profileJson.profile.compare(a_profile) == 0;
+		});
+	iter->parent = std::string(a_parent);
 }

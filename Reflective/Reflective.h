@@ -36,9 +36,10 @@ public:
 	static Reflective& instance();
 	static void setLogCallback(LogCallback a_callback);
 	bool loadFile(const std::string& a_file);
-	void setProfile(const std::string_view a_profile);
+	bool writeFile(const std::string& a_file, const bool a_ident = false)const;
+	void setCurrentProfile(const std::string_view a_profile);
 	bool hasProfile(const std::string_view a_profile)const { return m_fileData.hasProfile(a_profile); }
-
+	void clear() { m_fileData.clear(); }
 	template<typename Object> requires is_reflective_v<Object>
 	bool deserialize(const std::string& a_classname, Object& a_object)const
 	{
@@ -52,5 +53,12 @@ public:
 			profileStack.pop();
 		}
 		return true;
+	}
+	bool setParent(const std::string_view a_profile, const std::string_view a_parent);
+	
+	template<typename Object> requires is_reflective_v<Object>
+	void writeProfile(const std::string_view a_profile, const Object& a_data)
+	{
+		m_fileData.writeProfile(a_profile, a_data);
 	}
 };

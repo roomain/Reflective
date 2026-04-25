@@ -57,6 +57,12 @@ public:
 	}
 
 	template<typename Type>
+	static ReflectiveException unsupportedData(const std::source_location& a_location)
+	{
+		return ReflectiveException(a_location, std::format("Unsupported data \'{}\'", type_name<Type>()));
+	}
+
+	template<typename Type>
 	static ReflectiveException typeNotReflective(const std::source_location& a_location)
 	{
 		return ReflectiveException(a_location, std::format("Type {} is not a reflective type", type_name<Type>()));

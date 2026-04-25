@@ -12,27 +12,25 @@ namespace Reflectivetest
 	TEST_CLASS(Deserialization)
 	{
 	public:
-		/*TEST_METHOD_CLEANUP(cleanup)
+		TEST_METHOD(Test_no_serialization)
 		{
-			TestStructIntern::s_deserialized = false;
-			TestStructIntern::s_reference.m_bool = false;
-			TestStructIntern::s_reference.m_string = "";
-			TestStructIntern::s_reference.m_int = 0;
-			TestStructIntern::s_reference.m_floatVector.clear();
-
-			TestEnum::s_deserialized = false;
-			TestEnum::s_reference.m_enum = EnumTest::Enum0;
-			TestEnum::s_reference.m_value = 0;
-
-			TestNested::s_deserialized = false;
-		}*/
+			Reflective::instance().clear();
+			try
+			{
+				TestStructIntern myTest;
+			}
+			catch (...)
+			{
+				Assert::Fail(L"No reflection available does not cause exception!");
+			}
+		}
 		
 		TEST_METHOD(Test_simple)
 		{
 
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_simple"));
-			Reflective::instance().setProfile("Test_simple");
+			Reflective::instance().setCurrentProfile("Test_simple");
 			TestStructIntern myTest;
 
 			Assert::IsTrue(myTest.m_bool);
@@ -45,7 +43,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_profile_legacy"));
-			Reflective::instance().setProfile("Test_profile_legacy");
+			Reflective::instance().setCurrentProfile("Test_profile_legacy");
 			TestStructIntern myTest;
 
 			Assert::IsFalse(myTest.m_bool);
@@ -58,7 +56,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_profile_override"));
-			Reflective::instance().setProfile("Test_profile_override");
+			Reflective::instance().setCurrentProfile("Test_profile_override");
 			TestStructIntern myTest;
 
 			Assert::IsTrue(myTest.m_bool);
@@ -72,7 +70,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_enum_as_string"));
-			Reflective::instance().setProfile("Test_enum_as_string");
+			Reflective::instance().setCurrentProfile("Test_enum_as_string");
 			TestEnum myTest;
 
 			Assert::AreEqual(4, myTest.m_value);
@@ -83,7 +81,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_nested_struct"));
-			Reflective::instance().setProfile("Test_nested_struct");
+			Reflective::instance().setCurrentProfile("Test_nested_struct");
 			//TestEnum tEnum;
 			TestNested nested;
 			//Assert::IsTrue(TestEnum::s_deserialized);
@@ -96,7 +94,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_nested_struct_overriden"));
-			Reflective::instance().setProfile("Test_nested_struct_overriden");
+			Reflective::instance().setCurrentProfile("Test_nested_struct_overriden");
 			TestNested nested;
 			
 			Assert::AreEqual(3, nested.m_value);
@@ -108,7 +106,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_struct_legacy"));
-			Reflective::instance().setProfile("Test_struct_legacy");
+			Reflective::instance().setCurrentProfile("Test_struct_legacy");
 			TestLegacy legacy;
 
 			Assert::AreEqual(3, legacy.m_valueLegacy);
@@ -120,7 +118,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_optional"));
-			Reflective::instance().setProfile("Test_optional");
+			Reflective::instance().setCurrentProfile("Test_optional");
 			TestOptional opt;
 
 			Assert::IsTrue(opt.m_int.has_value());
@@ -133,7 +131,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_struct_default_string"));
-			Reflective::instance().setProfile("Test_struct_default_string");
+			Reflective::instance().setCurrentProfile("Test_struct_default_string");
 			TestDefault def;
 
 			Assert::AreEqual(2, def.m_int);
@@ -144,7 +142,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_struct_default_int"));
-			Reflective::instance().setProfile("Test_struct_default_int");
+			Reflective::instance().setCurrentProfile("Test_struct_default_int");
 			TestDefault def;
 
 			Assert::AreEqual(5, def.m_int);
@@ -155,7 +153,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_flags_as_string"));
-			Reflective::instance().setProfile("Test_flags_as_string");
+			Reflective::instance().setCurrentProfile("Test_flags_as_string");
 			TestFlag def;
 
 			Assert::AreEqual(static_cast<unsigned int>((1 << 2) | (1 << 4) | (1 << 1)), def.m_flag);
@@ -165,7 +163,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_VulkanFlags_as_string"));
-			Reflective::instance().setProfile("Test_VulkanFlags_as_string");
+			Reflective::instance().setCurrentProfile("Test_VulkanFlags_as_string");
 			TestVulkanFlag def;
 
 			Assert::AreEqual(
@@ -177,7 +175,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_optional_VulkanFlags_as_string_no_value"));
-			Reflective::instance().setProfile("Test_optional_VulkanFlags_as_string_no_value");
+			Reflective::instance().setCurrentProfile("Test_optional_VulkanFlags_as_string_no_value");
 			TestOptionalVulkanFlag def;
 
 			Assert::IsFalse(def.m_opt.has_value());
@@ -187,7 +185,7 @@ namespace Reflectivetest
 		{
 			Assert::IsTrue(Reflective::instance().loadFile(R"(..\..\Test_data\tests_deserialize.json)"));
 			Assert::IsTrue(Reflective::instance().hasProfile("Test_optional_VulkanFlags_as_string_has_value"));
-			Reflective::instance().setProfile("Test_optional_VulkanFlags_as_string_has_value");
+			Reflective::instance().setCurrentProfile("Test_optional_VulkanFlags_as_string_has_value");
 			TestOptionalVulkanFlag def;
 
 			Assert::IsTrue(def.m_opt.has_value());
