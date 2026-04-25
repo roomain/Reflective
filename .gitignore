@@ -419,4 +419,4 @@ FodyWeavers.xsd
 *.msp
 
 # test file
-./Test_data/tests_serialize.json
+Test_data/tests_serialize.json
