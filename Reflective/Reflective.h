@@ -61,4 +61,8 @@ public:
 	{
 		m_fileData.writeProfile(a_profile, a_data);
 	}
+
+	using const_iterator = std::vector<JsonReflectiveProfileData>::const_iterator;
+	constexpr const_iterator cbegin()const { return m_fileData.cbegin(); }
+	constexpr const_iterator cend()const { return m_fileData.cend(); }
 };
