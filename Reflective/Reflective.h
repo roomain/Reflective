@@ -39,6 +39,7 @@ public:
 	bool writeFile(const std::string& a_file, const bool a_ident = false)const;
 	void setCurrentProfile(const std::string_view a_profile);
 	bool hasProfile(const std::string_view a_profile)const { return m_fileData.hasProfile(a_profile); }
+	void removeProfile(const std::string_view a_profileName) { m_fileData.removeProfile(a_profileName); }
 	void clear() { m_fileData.clear(); }
 	template<typename Object> requires is_reflective_v<Object>
 	bool deserialize(const std::string& a_classname, Object& a_object)const

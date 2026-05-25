@@ -153,6 +153,17 @@ bool ReflectiveJsonFileData::hasProfile(const std::string_view a_profileName)con
 	return findProfile(a_profileName) != cend();
 }
 
+void ReflectiveJsonFileData::removeProfile(const std::string_view a_profileName)
+{
+	if (auto iter = std::ranges::find_if(m_reflectProfiles, [a_profileName](const auto& a_profile)
+		{
+			return a_profile.profile.compare(a_profileName) == 0;
+		}); iter != m_reflectProfiles.end())
+	{
+		m_reflectProfiles.erase(iter);
+	}
+}
+
 std::stack<ReflectiveJsonFileData::const_iterator> ReflectiveJsonFileData::parentProfiles(const std::string& a_profile, const std::string& a_classname, LogCallback a_logCallback)const
 {
 	std::stack<ReflectiveJsonFileData::const_iterator> profileStack;

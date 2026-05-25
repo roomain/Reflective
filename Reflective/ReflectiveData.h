@@ -46,6 +46,7 @@ public:
 	bool writeFile(const std::string& a_file, const bool a_ident = false)const;
 	const_iterator findProfile(const std::string_view a_profileName)const;
 	bool hasProfile(const std::string_view a_profileName)const;
+	void removeProfile(const std::string_view a_profileName);
 	void setParentProfile(const std::string_view a_profile, const std::string_view a_parent);
 	std::stack<const_iterator> parentProfiles(const std::string& a_profile, const std::string& a_classname, LogCallback a_logCallback)const;
 
