@@ -85,6 +85,9 @@ class ReflectiveParser:
 
                 file.write("public: \\\n")
                 file.write("static inline std::tuple<{}> s_reflectiveCtx; \\\n \\\n".format(tupleContent))
+                if (reflective_class.base_class is not None) :
+                    file.write("using Base = {}; \\\n".format(reflective_class.base_class))
+
                 file.write("private: \\\n")
                 file.write("static inline bool s_init = false; \\\n")
                 file.write("public: \\\n")
@@ -106,7 +109,6 @@ class ReflectiveParser:
                         tupleMakeContent += "std::make_pair(\"{}\", &{}::{}), \\\n\t".format(member[1], class_name, member[1])
 
                 file.write("\t\t{}::s_reflectiveCtx = std::make_tuple({}); \\\n".format(class_name, tupleMakeContent))
-
                 file.write("\t\t {}::s_init = true; \\\n".format(class_name))
                 file.write("\t} \\\n")
                 file.write("\tReflective::instance().deserialize(\"{}\",*this); \\\n".format(class_name))
