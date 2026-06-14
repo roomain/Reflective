@@ -66,4 +66,5 @@ public:
 	using const_iterator = std::vector<JsonReflectiveProfileData>::const_iterator;
 	constexpr const_iterator cbegin()const { return m_fileData.cbegin(); }
 	constexpr const_iterator cend()const { return m_fileData.cend(); }
+	constexpr size_t profileCount()const { return m_fileData.size(); }
 };

@@ -41,6 +41,7 @@ public:
 	using const_iterator = std::vector<JsonReflectiveProfileData>::const_iterator;
 	constexpr const_iterator cbegin()const { return m_reflectProfiles.cbegin(); }
 	constexpr const_iterator cend()const { return m_reflectProfiles.cend(); }
+	constexpr size_t size()const { return m_reflectProfiles.size(); }
 	void clear() { m_reflectProfiles.clear(); }
 	bool loadFile(const std::string& a_file, LogCallback a_logCallback);
 	bool writeFile(const std::string& a_file, const bool a_ident = false)const;
