@@ -99,6 +99,7 @@ public:
 			{
 				return a_profileData.profile.compare(a_profile) == 0;
 			});
+
 		if ( iter == m_reflectProfiles.cend())
 		{
 			JsonReflectiveProfileData profile{ .profile = std::string(a_profile) };

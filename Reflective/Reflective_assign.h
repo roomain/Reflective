@@ -409,13 +409,17 @@ constexpr bool assign_object(boost::json::object& a_object, const std::string_vi
 	if constexpr (is_reflective_v<Type>)
 	{
 		bRet = true;
-		a_reflective->serialize(a_object[a_memberName], a_value, Type::s_reflectiveCtx);
+		a_object[a_memberName] = boost::json::object();
+		a_reflective->serialize(a_object[a_memberName].as_object(), a_value, Type::s_reflectiveCtx);
 	}
 	else if constexpr(is_optional_reflective_v<Type>)
 	{
 		bRet = true;
 		if (a_value.has_value())
-			bRet = assign_object(a_object, a_memberName, a_value.value(), a_reflective);
+		{
+			a_object[a_memberName] = boost::json::object();
+			bRet = assign_object(a_object[a_memberName].as_object(), a_memberName, a_value.value(), a_reflective);
+		}
 	}
 	return bRet;
 }

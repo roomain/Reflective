@@ -49,7 +49,7 @@ REFLECT_CLASS
 struct TestEnum
 {
 	EnumTest m_enum;
-	int m_value;
+	int m_value = 0;
 	REFLECT_DEFINE(TestEnum)
 };
 
@@ -57,14 +57,14 @@ REFLECT_CLASS
 struct TestNested
 {
 	TestEnum m_enumStruct;
-	int m_value;
+	int m_value = 1;
 	REFLECT_DEFINE(TestNested)
 };
 
 REFLECT_CLASS
 struct TestLegacy : TestEnum
 {
-	int m_valueLegacy;
+	int m_valueLegacy = 2;
 	REFLECT_DEFINE(TestLegacy)
 };
 

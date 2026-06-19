@@ -25,8 +25,16 @@ namespace Reflectivetest
 		TEST_METHOD(Test_simpleWrite)
 		{
 			TestDefault defStruct;
+			defStruct.m_int = 20;
 			Reflective::instance().writeProfile("Test_simpleWrite", defStruct);
 			Reflective::instance().writeFile(R"(..\..\Test_data\tests_serialize.json)", true);
+		}
+
+		TEST_METHOD(Test_nestedWrite)
+		{
+			TestNested defStruct;
+			Reflective::instance().writeProfile("Test_nested", defStruct);
+			Reflective::instance().writeFile(R"(..\..\Test_data\Test_nestedWrite.json)", true);
 		}
 	};
 }
