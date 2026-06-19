@@ -204,7 +204,7 @@ constexpr bool assign_array(boost::json::value& a_jsonValue, const std::string_v
 			for (const auto& item : a_value)
 			{
 				boost::json::value val;
-				if (assign_object(val, a_memberName, item, a_reflective)
+				if (assign_object(val.as_object(), a_memberName, item, a_reflective)
 					|| assign_bool(val, a_memberName, item)
 					|| assign_double(val, a_memberName, item)
 					|| assign_int(val, a_memberName, item)
