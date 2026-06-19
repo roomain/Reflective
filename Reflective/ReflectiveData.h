@@ -83,7 +83,7 @@ public:
 	}
 
 	template<typename Object, typename ...Args>
-	void serialize(boost::json::object& a_jsonObject, Object& a_object, std::tuple<Args...>& a_accessMembers)
+	void serialize(boost::json::object& a_jsonObject, const Object& a_object, std::tuple<Args...>& a_accessMembers)
 	{
 		std::apply(
 			[&a_jsonObject, &a_object, this](Args&... tupleArgs)

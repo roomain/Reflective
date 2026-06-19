@@ -180,6 +180,42 @@ constexpr bool assign_string(boost::json::value& a_jsonValue, const std::string_
 }
 
 template<typename Type, typename Serializer>
+constexpr bool fillArray(boost::json::array& a_array, const std::string_view a_memberName, const Type& a_value, Serializer* const a_reflective)
+{
+	if (is_reflective_v<typename Type::value_type> || is_optional_reflective_v<typename Type::value_type>)
+	{
+		for (const auto& item : a_value)
+		{
+			boost::json::object obj;
+			a_reflective->serialize(obj, item, Type::value_type::s_reflectiveCtx);
+			a_array.emplace_back(obj);
+		}
+	}
+	else
+	{
+		for (const auto& item : a_value)
+		{
+			boost::json::value val;
+			if (assign_object(val.as_object(), a_memberName, item, a_reflective)
+				|| assign_bool(val, a_memberName, item)
+				|| assign_double(val, a_memberName, item)
+				|| assign_int(val, a_memberName, item)
+				|| assign_uint(val, a_memberName, item)
+				|| assign_string(val, a_memberName, item)
+				|| assign_array(val, a_memberName, item, a_reflective))
+			{
+				a_array.emplace_back(val);
+			}
+			else
+			{
+				throw ReflectiveException::unsupportedData<Type>(std::source_location::current());
+			}
+		}
+	}
+	return true;
+}
+
+template<typename Type, typename Serializer>
 constexpr bool assign_array(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value, Serializer* const a_reflective)
 {
 	bool bRet = false;
@@ -189,40 +225,7 @@ constexpr bool assign_array(boost::json::value& a_jsonValue, const std::string_v
 			return true;
 
 		boost::json::array array;
-		if (is_reflective_v<Type> || is_optional_reflective_v<Type>)
-		{
-			for (const auto& item : a_value)
-			{
-				boost::json::object obj;
-				a_reflective->serialize(obj, a_value, Type::s_reflectiveCtx);
-				array.emplace_back(obj);
-			}
-			bRet = true;
-		}
-		else
-		{
-			for (const auto& item : a_value)
-			{
-				boost::json::value val;
-				if (assign_object(val.as_object(), a_memberName, item, a_reflective)
-					|| assign_bool(val, a_memberName, item)
-					|| assign_double(val, a_memberName, item)
-					|| assign_int(val, a_memberName, item)
-					|| assign_uint(val, a_memberName, item)
-					|| assign_string(val, a_memberName, item)
-					|| assign_array(val, a_memberName, item, a_reflective))
-				{
-					array.emplace_back(val);
-				}
-				else
-				{
-					throw ReflectiveException::unsupportedData<Type>(std::source_location::current());
-				}
-			}
-			bRet = true;
-		}
-
-		if(bRet)
+		if(fillArray(array, a_memberName, a_value,a_reflective))
 			a_jsonValue = array;
 	}
 	return bRet;
@@ -434,40 +437,7 @@ constexpr bool assign_array(boost::json::object& a_object, const std::string_vie
 			return true;
 
 		boost::json::array array;
-		if constexpr(is_reflective_v<Type> || is_optional_reflective_v<Type>)
-		{
-			for (const auto& item : a_value)
-			{
-				boost::json::object obj;
-				a_reflective->serialize(obj, item, Type::s_reflectiveCtx);
-				array.emplace_back(obj);
-			}
-			bRet = true;
-		}
-		else
-		{
-			for (const auto& item : a_value)
-			{
-				boost::json::value val;
-				if (assign_object(val.as_object(), a_memberName, item, a_reflective)
-					|| assign_bool(val, a_memberName, item)
-					|| assign_double(val, a_memberName, item)
-					|| assign_int(val, a_memberName, item)
-					|| assign_uint(val, a_memberName, item)
-					|| assign_string(val, a_memberName, item)
-					|| assign_array(val, a_memberName, item, a_reflective))
-				{
-					array.emplace_back(val);
-				}
-				else
-				{
-					throw ReflectiveException::unsupportedData<Type>(std::source_location::current());
-				}
-			}
-			bRet = true;
-		}
-
-		if(bRet)
+		if (fillArray(array, a_memberName, a_value, a_reflective))
 			a_object[a_memberName] = array;
 	}
 	return bRet;

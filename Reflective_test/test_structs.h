@@ -62,6 +62,14 @@ struct TestNested
 };
 
 REFLECT_CLASS
+struct TestNestedArray
+{
+	std::vector<TestEnum> m_enumStructList;
+	std::string m_str = "default";
+	REFLECT_DEFINE(TestNestedArray)
+};
+
+REFLECT_CLASS
 struct TestLegacy : TestEnum
 {
 	int m_valueLegacy = 2;

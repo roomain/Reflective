@@ -36,5 +36,14 @@ namespace Reflectivetest
 			Reflective::instance().writeProfile("Test_nested", defStruct);
 			Reflective::instance().writeFile(R"(..\..\Test_data\Test_nestedWrite.json)", true);
 		}
+
+		TEST_METHOD(Test_nestedArrayWrite)
+		{
+			TestNestedArray defStruct;
+			defStruct.m_enumStructList.emplace_back();
+			defStruct.m_enumStructList.emplace_back();
+			Reflective::instance().writeProfile("TestNestedArray", defStruct);
+			Reflective::instance().writeFile(R"(..\..\Test_data\Test_nestedArrayWrite.json)", true);
+		}
 	};
 }

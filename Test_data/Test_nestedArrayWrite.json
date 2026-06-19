@@ -1,0 +1,25 @@
+{
+      "$shema": "not_yet_rated",
+      "title": "Reflective",
+      "include": [
+      ],
+      "ClassArray": [
+        {
+          "Id": {
+            "name": "TestNestedArray",
+            "parent": null
+          },
+          "TestNestedArray": {
+            "m_enumStructList": [
+              {
+                "m_value": 0
+              },
+              {
+                "m_value": 0
+              }
+            ],
+            "m_str": "default"
+          }
+        }
+      ]
+    }
