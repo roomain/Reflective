@@ -8,7 +8,7 @@
 #include "Reflective_traits.h"
 
 template<typename Type>
-constexpr bool assign_bool(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value)
+constexpr bool assign_bool(boost::json::value& a_jsonValue, const Type& a_value)
 {
 	bool bRet = false;
 	if constexpr (std::is_same_v<Type, bool>)
@@ -26,7 +26,7 @@ constexpr bool assign_bool(boost::json::value& a_jsonValue, const std::string_vi
 }
 
 template<typename Type>
-constexpr bool assign_double(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value)
+constexpr bool assign_double(boost::json::value& a_jsonValue, const Type& a_value)
 {
 	bool bRet = false;
 	if constexpr (std::is_same_v<Type, double>)
@@ -55,7 +55,7 @@ constexpr bool assign_double(boost::json::value& a_jsonValue, const std::string_
 }
 
 template<typename Type>
-constexpr bool assign_uint(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value)
+constexpr bool assign_uint(boost::json::value& a_jsonValue, const Type& a_value)
 {
 	bool bRet = false;
 	if constexpr (std::is_same_v<Type, uint64_t>)
@@ -63,17 +63,7 @@ constexpr bool assign_uint(boost::json::value& a_jsonValue, const std::string_vi
 		bRet = true;
 		a_jsonValue = a_value;
 	}
-	else if constexpr (std::is_same_v<Type, unsigned int>)
-	{
-		bRet = true;
-		a_jsonValue = static_cast<uint64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, unsigned long>)
-	{
-		bRet = true;
-		a_jsonValue = static_cast<uint64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, unsigned long long>)
+	else if constexpr (std::is_same_v<Type, unsigned int> || std::is_same_v<Type, unsigned long> || std::is_same_v<Type, unsigned long long>)
 	{
 		bRet = true;
 		a_jsonValue = static_cast<uint64_t>(a_value);
@@ -84,19 +74,7 @@ constexpr bool assign_uint(boost::json::value& a_jsonValue, const std::string_vi
 		if (a_value.has_value())
 			a_jsonValue = a_value.value();
 	}
-	else if constexpr (is_std_optional_v<unsigned int>)
-	{
-		bRet = true;
-		if (a_value.has_value())
-			a_jsonValue = static_cast<uint64_t>(a_value.value());
-	}
-	else if constexpr (is_std_optional_v<unsigned long>)
-	{
-		bRet = true;
-		if (a_value.has_value())
-			a_jsonValue = static_cast<uint64_t>(a_value.value());
-	}
-	else if constexpr (is_std_optional_v<unsigned long long>)
+	else if constexpr (is_std_optional_v<unsigned int> || is_std_optional_v<unsigned long> || is_std_optional_v<unsigned long long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -106,7 +84,7 @@ constexpr bool assign_uint(boost::json::value& a_jsonValue, const std::string_vi
 }
 
 template<typename Type>
-constexpr bool assign_int(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value)
+constexpr bool assign_int(boost::json::value& a_jsonValue, const Type& a_value)
 {
 	bool bRet = false;
 	if constexpr (std::is_same_v<Type, int64_t>)
@@ -114,17 +92,7 @@ constexpr bool assign_int(boost::json::value& a_jsonValue, const std::string_vie
 		bRet = true;
 		a_jsonValue = a_value;
 	}
-	else if constexpr (std::is_same_v<Type, int>)
-	{
-		bRet = true;
-		a_jsonValue = static_cast<int64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, long>)
-	{
-		bRet = true;
-		a_jsonValue = static_cast<int64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, long long>)
+	else if constexpr (std::is_same_v<Type, int> || std::is_same_v<Type, long> || std::is_same_v<Type, long long>)
 	{
 		bRet = true;
 		a_jsonValue = static_cast<int64_t>(a_value);
@@ -135,19 +103,7 @@ constexpr bool assign_int(boost::json::value& a_jsonValue, const std::string_vie
 		if (a_value.has_value())
 			a_jsonValue = a_value.value();
 	}
-	else if constexpr (is_std_optional_v<int>)
-	{
-		bRet = true;
-		if (a_value.has_value())
-			a_jsonValue = static_cast<int64_t>(a_value.value());
-	}
-	else if constexpr (is_std_optional_v<long>)
-	{
-		bRet = true;
-		if (a_value.has_value())
-			a_jsonValue = static_cast<int64_t>(a_value.value());
-	}
-	else if constexpr (is_std_optional_v<long long>)
+	else if constexpr (is_std_optional_v<int> || is_std_optional_v<long> || is_std_optional_v<long long>)
 	{
 		bRet = true;
 		if (a_value.has_value())
@@ -157,7 +113,7 @@ constexpr bool assign_int(boost::json::value& a_jsonValue, const std::string_vie
 }
 
 template<typename Type>
-constexpr bool assign_string(boost::json::value& a_jsonValue, const std::string_view a_memberName, const Type& a_value)
+constexpr bool assign_string(boost::json::value& a_jsonValue, const Type& a_value)
 {
 	bool bRet = false;
 	if constexpr (is_convertible<std::string, Type>)
@@ -197,11 +153,11 @@ constexpr bool fillArray(boost::json::array& a_array, const std::string_view a_m
 		{
 			boost::json::value val;
 			if (assign_object(val.as_object(), a_memberName, item, a_reflective)
-				|| assign_bool(val, a_memberName, item)
-				|| assign_double(val, a_memberName, item)
-				|| assign_int(val, a_memberName, item)
-				|| assign_uint(val, a_memberName, item)
-				|| assign_string(val, a_memberName, item)
+				|| assign_bool(val, item)
+				|| assign_double(val, item)
+				|| assign_int(val, item)
+				|| assign_uint(val, item)
+				|| assign_string(val, item)
 				|| assign_array(val, a_memberName, item, a_reflective))
 			{
 				a_array.emplace_back(val);
