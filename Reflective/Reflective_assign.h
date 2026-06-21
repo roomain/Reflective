@@ -138,7 +138,7 @@ constexpr bool assign_string(boost::json::value& a_jsonValue, const Type& a_valu
 template<typename Type, typename Serializer>
 constexpr bool fillArray(boost::json::array& a_array, const std::string_view a_memberName, const Type& a_value, Serializer* const a_reflective)
 {
-	if (is_reflective_v<typename Type::value_type> || is_optional_reflective_v<typename Type::value_type>)
+	if constexpr(is_reflective_v<typename Type::value_type> || is_optional_reflective_v<typename Type::value_type>)
 	{
 		for (const auto& item : a_value)
 		{
@@ -152,8 +152,7 @@ constexpr bool fillArray(boost::json::array& a_array, const std::string_view a_m
 		for (const auto& item : a_value)
 		{
 			boost::json::value val;
-			if (assign_object(val.as_object(), a_memberName, item, a_reflective)
-				|| assign_bool(val, item)
+			if (assign_bool(val, item)
 				|| assign_double(val, item)
 				|| assign_int(val, item)
 				|| assign_uint(val, item)
@@ -245,17 +244,7 @@ constexpr bool assign_uint(boost::json::object& a_object, const std::string_view
 		bRet = true;
 		a_object[a_memberName] = a_value;
 	}
-	else if constexpr (std::is_same_v<Type, unsigned int>)
-	{
-		bRet = true;
-		a_object[a_memberName] = static_cast<uint64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, unsigned long>)
-	{
-		bRet = true;
-		a_object[a_memberName] = static_cast<uint64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, unsigned long long>)
+	else if constexpr (std::is_same_v<Type, unsigned int> || std::is_same_v<Type, unsigned long> || std::is_same_v<Type, unsigned long long>)
 	{
 		bRet = true;
 		a_object[a_memberName] = static_cast<uint64_t>(a_value);
@@ -296,17 +285,7 @@ constexpr bool assign_int(boost::json::object& a_object, const std::string_view 
 		bRet = true;
 		a_object[a_memberName] = a_value;
 	}
-	else if constexpr (std::is_same_v<Type, int>)
-	{
-		bRet = true;
-		a_object[a_memberName] = static_cast<int64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, long>)
-	{
-		bRet = true;
-		a_object[a_memberName] = static_cast<int64_t>(a_value);
-	}
-	else if constexpr (std::is_same_v<Type, long long>)
+	else if constexpr (std::is_same_v<Type, int> || std::is_same_v<Type, long> || std::is_same_v<Type, long long>)
 	{
 		bRet = true;
 		a_object[a_memberName] = static_cast<int64_t>(a_value);

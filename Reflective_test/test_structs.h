@@ -94,6 +94,13 @@ struct TestDefault
 };
 
 
+REFLECT_CLASS
+struct TestVector
+{
+	std::vector<std::string> vData;
+	REFLECT_DEFINE(TestVector)
+};
+
 constexpr std::vector<std::string> split(const std::string_view a_entry, const char a_separator)
 {
 	std::string temp (a_entry);

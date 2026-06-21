@@ -191,5 +191,18 @@ namespace Reflectivetest
 			Assert::IsTrue(def.m_opt.has_value());
 			Assert::IsTrue(def.m_opt.value().m_flag == VK_QUEUE_COMPUTE_BIT);
 		}
+
+		TEST_METHOD(Test_vector)
+		{
+			TestVector defStruct;
+			defStruct.vData.emplace_back("TEST");
+			defStruct.vData.emplace_back("TEST");
+			defStruct.vData.emplace_back("TEST");
+			Reflective::instance().writeProfile("TestVector", defStruct);
+			Assert::IsTrue(Reflective::instance().hasProfile("TestVector"));
+			Reflective::instance().setCurrentProfile("TestVector");
+			TestVector defStructLoad;
+			Assert::AreEqual(static_cast<int>(defStructLoad.vData.size()), 3);
+		}
 	};
 }
