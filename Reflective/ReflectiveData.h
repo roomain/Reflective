@@ -48,6 +48,7 @@ public:
 	const_iterator findProfile(const std::string_view a_profileName)const;
 	bool hasProfile(const std::string_view a_profileName)const;
 	void removeProfile(const std::string_view a_profileName);
+	bool renameProfile(const std::string_view a_oldName, const std::string_view a_newName);
 	void setParentProfile(const std::string_view a_profile, const std::string_view a_parent);
 	std::stack<const_iterator> parentProfiles(const std::string& a_profile, const std::string& a_classname, LogCallback a_logCallback)const;
 

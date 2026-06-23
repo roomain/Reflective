@@ -164,6 +164,19 @@ void ReflectiveJsonFileData::removeProfile(const std::string_view a_profileName)
 	}
 }
 
+bool ReflectiveJsonFileData::renameProfile(const std::string_view a_oldName, const std::string_view a_newName)
+{
+	if (auto iter = std::ranges::find_if(m_reflectProfiles, [a_oldName](const auto& a_profile)
+		{
+			return a_profile.profile.compare(a_oldName) == 0;
+		}); iter != m_reflectProfiles .end()  && !hasProfile(a_newName))
+	{
+		iter->profile = a_newName;
+		return true;
+	}
+	return false;
+}
+
 std::stack<ReflectiveJsonFileData::const_iterator> ReflectiveJsonFileData::parentProfiles(const std::string& a_profile, const std::string& a_classname, LogCallback a_logCallback)const
 {
 	std::stack<ReflectiveJsonFileData::const_iterator> profileStack;

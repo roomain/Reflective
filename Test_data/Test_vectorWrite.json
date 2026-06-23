@@ -1,0 +1,21 @@
+{
+      "$shema": "not_yet_rated",
+      "title": "Reflective",
+      "include": [
+      ],
+      "ClassArray": [
+        {
+          "Id": {
+            "name": "TestVector",
+            "parent": null
+          },
+          "TestVector": {
+            "vData": [
+              "TEST",
+              "TEST",
+              "TEST"
+            ]
+          }
+        }
+      ]
+    }

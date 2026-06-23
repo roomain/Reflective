@@ -179,6 +179,7 @@ python reflective.py $(ProjectDir)
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="test_deserialize.cpp" />
+    <ClCompile Include="test_profile.cpp" />
     <ClCompile Include="test_serialize.cpp" />
     <ClCompile Include="test_type_traits.cpp" />
   </ItemGroup>

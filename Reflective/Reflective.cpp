@@ -41,6 +41,14 @@ void Reflective::setCurrentProfile(const std::string_view a_profile)
 	m_currentProfile = a_profile;
 }
 
+void Reflective::renameProfile(const std::string_view a_oldName, const std::string_view a_newName)
+{
+	if (m_fileData.renameProfile(a_oldName, a_newName) && m_currentProfile.compare(a_oldName) == 0)
+	{
+		m_currentProfile = a_newName;
+	}
+}
+
 bool Reflective::setParent(const std::string_view a_profile, const std::string_view a_parent)
 {
 	if (hasProfile(a_profile) && hasProfile(a_parent))
