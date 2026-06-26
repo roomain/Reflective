@@ -40,6 +40,7 @@ public:
 	void setCurrentProfile(const std::string_view a_profile);
 	constexpr  std::string currentProfile()const { return m_currentProfile; }
 	bool hasProfile(const std::string_view a_profile)const { return m_fileData.hasProfile(a_profile); }
+	bool hasClass(const std::string_view a_profile, const std::string a_classname)const;
 	void removeProfile(const std::string_view a_profileName) { m_fileData.removeProfile(a_profileName); }
 	void renameProfile(const std::string_view a_oldName, const std::string_view a_newName);
 

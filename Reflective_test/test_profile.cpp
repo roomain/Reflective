@@ -46,5 +46,13 @@ namespace Reflectivetest
 			TestDefault defStructNew;
 			Assert::AreEqual(defStructNew.m_int, defStruct.m_int);
 		}
+
+		TEST_METHOD(Test_hasClass)
+		{
+			TestDefault defStruct;
+			Reflective::instance().writeProfile("Test_simpleWrite", defStruct);
+			Assert::IsTrue(Reflective::instance().hasProfile("Test_simpleWrite"));
+			Assert::IsTrue(Reflective::instance().hasClass("Test_simpleWrite", "TestDefault"));
+		}
 	};
 }

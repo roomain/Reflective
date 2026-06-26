@@ -153,6 +153,15 @@ bool ReflectiveJsonFileData::hasProfile(const std::string_view a_profileName)con
 	return findProfile(a_profileName) != cend();
 }
 
+bool ReflectiveJsonFileData::hasClass(const std::string_view a_profile, const std::string a_classname)const
+{
+	if (auto iter = findProfile(a_profile); iter != cend())
+	{
+		return iter->m_classes.find(a_classname) != iter->m_classes.cend();
+	}
+	return false;
+}
+
 void ReflectiveJsonFileData::removeProfile(const std::string_view a_profileName)
 {
 	if (auto iter = std::ranges::find_if(m_reflectProfiles, [a_profileName](const auto& a_profile)

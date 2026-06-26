@@ -41,6 +41,11 @@ void Reflective::setCurrentProfile(const std::string_view a_profile)
 	m_currentProfile = a_profile;
 }
 
+bool Reflective::hasClass(const std::string_view a_profile, const std::string a_classname)const
+{
+	return m_fileData.hasClass(a_profile, a_classname);
+}
+
 void Reflective::renameProfile(const std::string_view a_oldName, const std::string_view a_newName)
 {
 	if (m_fileData.renameProfile(a_oldName, a_newName) && m_currentProfile.compare(a_oldName) == 0)
