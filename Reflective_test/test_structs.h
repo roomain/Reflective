@@ -45,6 +45,23 @@ constexpr EnumTest convert<EnumTest, std::string_view>(const std::string_view& d
 	return converted;
 }
 
+template<>
+constexpr  std::string convert<std::string, EnumTest>(const EnumTest& data)
+{
+	switch (data)
+	{
+	case EnumTest::Enum0:
+		return "Enum0";
+	case EnumTest::Enum1:
+		return "Enum1";
+	case EnumTest::Enum2:
+		return "Enum2";
+	}
+	return "";
+}
+
+
+
 REFLECT_CLASS
 struct TestEnum
 {

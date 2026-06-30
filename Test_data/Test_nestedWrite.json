@@ -11,6 +11,7 @@
           },
           "TestNested": {
             "m_enumStruct": {
+              "m_enum": "",
               "m_value": 0
             },
             "m_value": 1

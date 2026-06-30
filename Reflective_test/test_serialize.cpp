@@ -79,6 +79,7 @@ namespace Reflectivetest
 			Reflective::instance().setCurrentProfile("TestLegacy");
 			TestLegacy defStruct2;
 			Assert::AreEqual(defStruct.m_value, defStruct2.m_value);
+			Assert::IsTrue(defStruct.m_enum == defStruct2.m_enum);
 		}
 	};
 }

@@ -12,9 +12,11 @@
           "TestNestedArray": {
             "m_enumStructList": [
               {
+                "m_enum": "",
                 "m_value": 0
               },
               {
+                "m_enum": "",
                 "m_value": 0
               }
             ],
