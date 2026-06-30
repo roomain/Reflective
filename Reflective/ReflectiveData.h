@@ -65,9 +65,9 @@ public:
 	template<typename Object, typename ...Args>
 	void deserialize(const boost::json::object& a_jsonObject, Object& a_object, std::tuple<Args...>& a_accessMembers)const
 	{
-		if constexpr (has_base<Object>::value)
+		if constexpr (has_base_v<Object>)
 		{
-			if constexpr(is_reflective<typename Object::Base>::value)
+			if constexpr(is_reflective_v<typename Object::Base>)
 				deserialize(a_jsonObject, static_cast<Object::Base&>(a_object), Object::Base::s_reflectiveCtx);
 		}
 		std::apply(
@@ -92,9 +92,9 @@ public:
 	template<typename Object, typename ...Args>
 	void serialize(boost::json::object& a_jsonObject, const Object& a_object, std::tuple<Args...>& a_accessMembers)
 	{
-		if constexpr (has_base<Object>::value)
+		if constexpr (has_base_v<Object>)
 		{
-			if constexpr (is_reflective<typename Object::Base>::value)
+			if constexpr (is_reflective_v<typename Object::Base>)
 				serialize(a_jsonObject, static_cast<const Object::Base&>(a_object), Object::Base::s_reflectiveCtx);
 		}
 		std::apply(
