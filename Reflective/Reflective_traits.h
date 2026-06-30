@@ -114,3 +114,12 @@ constexpr bool is_variant_assignable(const std::variant<Ts...>&) {
 }
 
 //-------------------------------------------------------------------------------
+// check is has base class
+template<typename, typename = std::void_t<>>
+struct has_base : std::false_type {};
+
+template<typename T>
+struct has_base<T, std::void_t<typename T::Base> > : std::true_type {};
+
+//template<typename T>
+//constexpr bool has_base_v = has_base<T>::value;

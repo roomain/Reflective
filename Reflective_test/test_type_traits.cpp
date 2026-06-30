@@ -90,5 +90,19 @@ namespace Reflectivetest
 			Assert::IsFalse(is_std_optional_v<TestNotReflective>);
 			Assert::IsTrue(is_std_optional_v<std::optional<TestOptionalVulkanFlag>>);
 		}
+
+		TEST_METHOD(Test_HasBase)
+		{
+			struct Test
+			{
+			};
+
+			struct TestEx : Test
+			{
+				using Base = Test;
+			};
+
+			Assert::IsTrue(has_base<TestEx>::value);
+		}
 	};
 }
