@@ -56,5 +56,29 @@ namespace Reflectivetest
 			Reflective::instance().writeProfile("TestVector", defStruct);
 			Reflective::instance().writeFile(R"(..\..\Test_data\Test_vectorWrite.json)", true);
 		}
+
+		TEST_METHOD(Test_vectorReWrite)
+		{
+			TestVector defStruct;
+			Reflective::instance().writeProfile("TestVector0", defStruct);
+			defStruct.vData.emplace_back("TEST");
+			defStruct.vData.emplace_back("TEST");
+			Reflective::instance().writeProfile("TestVector0", defStruct);
+			Reflective::instance().setCurrentProfile("TestVector0");
+			TestVector defStruct2;
+			Assert::AreEqual(2, static_cast<int>(defStruct2.vData.size()));
+		}
+
+		TEST_METHOD(Test_legacyWrite)
+		{
+			TestLegacy defStruct;
+			defStruct.m_enum = EnumTest::Enum1;
+			defStruct.m_value = 5;
+			defStruct.m_valueLegacy = 3;
+			Reflective::instance().writeProfile("TestLegacy", defStruct);
+			Reflective::instance().setCurrentProfile("TestLegacy");
+			TestLegacy defStruct2;
+			Assert::AreEqual(defStruct.m_value, defStruct2.m_value);
+		}
 	};
 }
