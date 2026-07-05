@@ -201,7 +201,7 @@ std::stack<ReflectiveJsonFileData::const_iterator> ReflectiveJsonFileData::paren
 	{
 		if (a_logCallback)
 			a_logCallback(std::source_location::current(),
-				std::format("Parent class {} not defined in {}", a_classname, a_profile));
+				std::format("Class {} in profile {} not found", a_classname, a_profile));
 		return profileStack;
 	}
 
