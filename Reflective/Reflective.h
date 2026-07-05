@@ -4,6 +4,9 @@
 * @date 05 / 04 / 2026
 * @author Roomain
 ************************************************/
+#pragma warning(push)
+#pragma warning( disable : 4251 )
+
 #include <string>
 #include <string_view>
 #include <functional>
@@ -15,12 +18,13 @@
 #include <boost/json/visit.hpp>
 #include "ReflectiveVisitor.h"
 #include "ReflectiveData.h"
+#include "reflective_globals.h"
 
 
 using LogCallback = std::function<void(const std::source_location&, const std::string_view)>;
 
 /*@brief singleton for json deserialisation*/
-class Reflective
+class REFLECTIVE_EXPORT Reflective
 {
 private:
 	std::string m_currentProfile;										/*!< current profile*/
@@ -72,3 +76,5 @@ public:
 	constexpr const_iterator cend()const { return m_fileData.cend(); }
 	constexpr size_t profileCount()const { return m_fileData.size(); }
 };
+
+#pragma warning(pop)

@@ -4,6 +4,9 @@
 * @date 08 / 04 / 2026
 * @author Roomain
 ************************************************/
+
+#pragma warning(push)
+#pragma warning( disable : 4251 )
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -14,6 +17,7 @@
 #include "Reflective_traits.h"
 #include "ReflectiveVisitor.h"
 #include "Reflective_assign.h"
+#include "reflective_globals.h"
 
 struct JsonReflectiveProfileData
 {
@@ -24,7 +28,7 @@ struct JsonReflectiveProfileData
 
 using LogCallback = std::function<void(const std::source_location&, const std::string_view)>;
 
-class ReflectiveJsonFileData
+class REFLECTIVE_EXPORT ReflectiveJsonFileData
 {	
 private:
 
@@ -123,3 +127,5 @@ public:
 		serialize(object, a_data, Object::s_reflectiveCtx);
 	}
 };
+
+#pragma warning(pop)
