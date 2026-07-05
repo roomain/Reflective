@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <BOOST_VERSION>1_90_0</BOOST_VERSION>
+    <BOOST_VERSION>1_91_0</BOOST_VERSION>
     <BOOST_DIR Condition="exists('D:\Libraries\boost')">D:\Libraries\boost\boost_$(BOOST_VERSION)</BOOST_DIR>
     <BOOST_DIR Condition="exists('C:\libraries\boost')">C:\libraries\boost\boost_$(BOOST_VERSION)</BOOST_DIR>
     <BOOST_LIB>$(BOOST_DIR)\stage\lib</BOOST_LIB>
