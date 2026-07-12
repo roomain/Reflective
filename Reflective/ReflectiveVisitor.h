@@ -147,7 +147,7 @@ struct ReflectiveVisitor
 		}
 	}
 
-	void operator()(const double& a_value) const
+	void operator()(const double a_value) const
 	{
 		if constexpr (std::is_same_v<Type, double>)
 		{
